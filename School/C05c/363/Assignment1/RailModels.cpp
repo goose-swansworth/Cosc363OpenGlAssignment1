@@ -235,6 +235,7 @@ void rail_bed(std::vector<std::pair<float, float>>& line_array, int n_points,  f
 	
 	float vx, vy, vz;
 	float wx, wy, wz;
+	float tx, ty, tz;
 	
 	float theta = 0;
 	float theta_step = M_PI / n_points ;
@@ -261,7 +262,7 @@ void rail_bed(std::vector<std::pair<float, float>>& line_array, int n_points,  f
 		// compute the eplipices centred at pi and pi+1
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glColor3f(0.5, 0.5, 0.5);
+		glColor3f(1, 1, 1);
 		glNormal3f(0, 1, 0);
 		glBegin(GL_QUAD_STRIP);
         while (theta <= M_PI) {
@@ -272,6 +273,12 @@ void rail_bed(std::vector<std::pair<float, float>>& line_array, int n_points,  f
 			wx = pi_p1.first + major*cos(theta)*vi_p1.first;
 			wy = minor*sin(theta);
 			wz = pi_p1.second + major*cos(theta)*vi_p1.second;
+			
+			tx = pi_p1.first + major*cos(theta + theta_step)*vi_p1.first;
+			ty = minor*sin(theta + theta_step);
+			tz = pi_p1.second + major*cos(theta + theta_step)*vi_p1.second;
+			
+			normal(vx, vy, vz, wx, wy, wz, tx, ty, tz);
 			
 			glVertex3f(vx, vy, vz);
 			glVertex3f(wx, wy, wz);
