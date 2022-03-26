@@ -1,10 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/railway_world.dir/RailModels.cpp.o"
-  "CMakeFiles/railway_world.dir/RailModels.cpp.o.d"
   "CMakeFiles/railway_world.dir/RailwayWorld.cpp.o"
-  "CMakeFiles/railway_world.dir/RailwayWorld.cpp.o.d"
   "CMakeFiles/railway_world.dir/assignmentfuncs.cpp.o"
-  "CMakeFiles/railway_world.dir/assignmentfuncs.cpp.o.d"
   "railway_world"
   "railway_world.pdb"
 )

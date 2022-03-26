@@ -28,7 +28,7 @@ float lookz = 0;
 
 float w1 = 3;
 float w2 = 4;
-float track_height = 1;
+float track_height = 2;
 
 
 //---------------------------------------------------------------------
@@ -88,6 +88,7 @@ void display(void)
    floor();
    track_loop(line_array, w1, w2, track_height);
    sleepers(line_array, w1*2, w1*2/5, track_height/2);
+   rail_bed(line_array, 10, w2*2, track_height/4);
 
     //int num_wagons = 4;
 
@@ -175,7 +176,7 @@ int main(int argc, char** argv)
 
    glutInit(&argc, argv);
    glutInitDisplayMode (GLUT_DOUBLE|GLUT_DEPTH);
-   glutInitWindowSize (600, 600);
+   glutInitWindowSize (1024, 1024);
    glutInitWindowPosition (50, 50);
    glutCreateWindow ("Cum Express");
    initialize ();

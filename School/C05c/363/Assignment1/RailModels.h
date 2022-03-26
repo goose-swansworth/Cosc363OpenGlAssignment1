@@ -15,6 +15,8 @@ void track_loop(std::vector<std::pair<float, float>>& line_array, float w1, floa
 
 void sleepers(std::vector<std::pair<float, float>>& line_array, float s1, float s2, float height);
 
+void rail_bed(std::vector<std::pair<float, float>>& line_array, int n_points,  float major, float minor);
+
 void engine();
 
 void wagon();

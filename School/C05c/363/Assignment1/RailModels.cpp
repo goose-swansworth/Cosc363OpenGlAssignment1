@@ -44,9 +44,10 @@ void loadTexture()
 
 void floor()
 {
-    loadTexture();
-    glBindTexture(GL_TEXTURE_2D, txId);
-    glEnable(GL_TEXTURE_2D);
+    //loadTexture();
+    //glBindTexture(GL_TEXTURE_2D, txId);
+    //glEnable(GL_TEXTURE_2D);
+    glColor3f(0.3, 0.3, 0.3);
     glNormal3f(0.0, 1.0, 0.0);
 
     //The floor is made up of several tiny squares on a 400 x 400 grid. Each square has a unit size.
@@ -56,23 +57,13 @@ void floor()
     {
         for(int j = -200;  j < 200; j++)
         {
-            if (i % 100 == 0 && j % 100 == 0) {
-            glTexCoord2f(i, j);
-            }
             glVertex3f(i, 0, j);
-
-            glTexCoord2f(i, j+1);
             glVertex3f(i, 0, j+1);
-
-            glTexCoord2f(i+1, j+1);
             glVertex3f(i+1, 0, j+1);
-
-            glTexCoord2f(i+1, j);
             glVertex3f(i+1, 0, j);
         }
     }
     glEnd();
-    glDisable(GL_TEXTURE_2D);
     glMaterialfv(GL_FRONT, GL_SPECULAR, white);
 
 }
@@ -178,11 +169,40 @@ static void sleeper(float pix, float piz, float vix, float viz, float uix, float
   S3x = six + vix*s1; S3z = siz + viz*s1;
   S4x = six - vix*s1; S4z = siz - viz*s1;
   
-  glNormal3f(0, 1, 0);
+  // top of sleeper
+  glNormal3f(0, 1, 0); 
   glVertex3f(S1x, height, S1z);
   glVertex3f(S3x, height, S3z);
   glVertex3f(S4x, height, S4z);
   glVertex3f(S2x, height, S2z);
+  
+  // left side
+  glNormal3f(1, 0, 0);
+  glVertex3f(S2x, 0, S2z);
+  glVertex3f(S2x, height, S2z);
+  glVertex3f(S4x, height, S4z);
+  glVertex3f(S4x, 0, S4z);
+  
+  // right side
+  glNormal3f(-1, 0, 0);
+  glVertex3f(S3x, height, S3z);
+  glVertex3f(S1x, height, S1z);
+  glVertex3f(S1x, 0, S1z);
+  glVertex3f(S3x, 0 , S3z);
+  
+  // back side
+  glNormal3f(0, 0, 1);
+  glVertex3f(S2x, 0, S2z);
+  glVertex3f(S1x, 0, S1z);
+  glVertex3f(S1x, height, S1z);
+  glVertex3f(S2x, height, S2z);
+  
+  // front side
+  glNormal3f(0, 0, -1);
+  glVertex3f(S4x, 0, S4z);
+  glVertex3f(S4x, height, S4z);
+  glVertex3f(S3x, height, S3z);
+  glVertex3f(S3x, 0 , S3z);
 }
 
 
@@ -208,6 +228,61 @@ void sleepers(std::vector<std::pair<float, float>>& line_array, float s1, float 
   glMaterialfv(GL_FRONT, GL_SPECULAR, black);
 }
 
+
+void rail_bed(std::vector<std::pair<float, float>>& line_array, int n_points,  float major, float minor)
+{
+	int n_line_points = line_array.size();
+	
+	float vx, vy, vz;
+	float wx, wy, wz;
+	
+	float theta = 0;
+	float theta_step = M_PI / n_points ;
+	
+	for (int i = 0; i < n_line_points; i++) {
+		//pi, pi+1, and pi+2 (points on medium line)
+        std::pair<float, float> pi = line_array[i % n_line_points];
+        std::pair<float, float> pi_p1 = line_array[(i + 1) % n_line_points];
+        std::pair<float, float> pi_p2 = line_array[(i + 2) % n_line_points];
+
+        //calcute ui (normal vector from pi to pi+1)
+        std::pair<float, float> ui = {(pi_p1.first - pi.first), (pi_p1.second - pi.second)};
+        normalize_2d_vec(ui);
+
+        //calcute ui+1 (normal vector from pi+1 to pi+2)
+        std::pair<float, float> ui_p1 = {(pi_p2.first - pi_p1.first), (pi_p2.second - pi_p1.second)};
+        normalize_2d_vec(ui_p1);
+
+        //calcute vi, vi+1 (normal vector prep to ui and ui+1)
+        std::pair<float, float> vi = {ui.second, -ui.first};
+        std::pair<float, float> vi_p1 = {ui_p1.second, -ui_p1.first};
+        
+        
+		// compute the eplipices centred at pi and pi+1
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glColor3f(0.5, 0.5, 0.5);
+		glNormal3f(0, 1, 0);
+		glBegin(GL_QUAD_STRIP);
+        while (theta <= M_PI) {
+			vx = pi.first + major*cos(theta)*vi.first;
+			vy = minor*sin(theta);
+			vz = pi.second + major*cos(theta)*vi.second;
+			
+			wx = pi_p1.first + major*cos(theta)*vi_p1.first;
+			wy = minor*sin(theta);
+			wz = pi_p1.second + major*cos(theta)*vi_p1.second;
+			
+			glVertex3f(vx, vy, vz);
+			glVertex3f(wx, wy, wz);
+			
+			theta += theta_step;
+		}
+		glEnd();
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		theta = 0;
+	}
+}
 
 //--------------- MODEL BASE --------------------------------------
 // This is a common base for the locomotive and wagons
