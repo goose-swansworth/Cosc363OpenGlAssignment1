@@ -4,9 +4,10 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailModels.cpp" "/home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles/railway_world.dir/RailModels.cpp.o"
-  "/home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailwayWorld.cpp" "/home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles/railway_world.dir/RailwayWorld.cpp.o"
-  "/home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/assignmentfuncs.cpp" "/home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles/railway_world.dir/assignmentfuncs.cpp.o"
+  "/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailModels.cpp" "/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles/railway_world.dir/RailModels.cpp.o"
+  "/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailwayWorld.cpp" "/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles/railway_world.dir/RailwayWorld.cpp.o"
+  "/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/assignmentfuncs.cpp" "/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles/railway_world.dir/assignmentfuncs.cpp.o"
+  "/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/loadTGA.cpp" "/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles/railway_world.dir/loadTGA.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

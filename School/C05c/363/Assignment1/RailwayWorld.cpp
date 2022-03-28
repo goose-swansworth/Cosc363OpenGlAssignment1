@@ -30,6 +30,8 @@ float w1 = 3;
 float w2 = 4;
 float track_height = 2;
 
+GLuint txId[2];
+
 
 //---------------------------------------------------------------------
 void initialize(void)
@@ -85,10 +87,10 @@ void display(void)
    //speen
    glRotatef(theta, 0, 1, 0);
 
-   floor();
+   floor(txId);
    track_loop(line_array, w1, w2, track_height);
    sleepers(line_array, w1*2, w1*2/5, track_height/2);
-   rail_bed(line_array, 10, w2*2, track_height/4);
+   rail_bed(line_array, 10, w2*2, track_height/4, txId);
 
     //int num_wagons = 4;
 
@@ -173,6 +175,8 @@ int main(int argc, char** argv)
     //for (std::pair<float, float>point : line_array) {
     //    cout << point.first << "," << point.second << endl;
     //}
+
+    glGenTextures(2, txId);
 
    glutInit(&argc, argv);
    glutInitDisplayMode (GLUT_DOUBLE|GLUT_DEPTH);

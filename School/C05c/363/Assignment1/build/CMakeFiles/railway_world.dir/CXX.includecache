@@ -6,14 +6,8 @@
 
 #IncludeRegexTransform: 
 
-/home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailModels.h
-assignmentfuncs.h
-/home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/assignmentfuncs.h
-
-/home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailwayWorld.cpp
-math.h
--
-GL/freeglut.h
+/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/assignmentfuncs.cpp
+cstdio
 -
 iostream
 -
@@ -21,12 +15,18 @@ fstream
 -
 string
 -
-RailModels.h
-/home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailModels.h
+vector
+-
+cmath
+-
+GL/freeglut.h
+/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/GL/freeglut.h
 assignmentfuncs.h
-/home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/assignmentfuncs.h
+/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/assignmentfuncs.h
+loadTGA.h
+/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/loadTGA.h
 
-/home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/assignmentfuncs.h
+/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/assignmentfuncs.h
 cstdio
 -
 iostream
@@ -38,5 +38,13 @@ string
 vector
 -
 utility
+-
+
+/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/loadTGA.h
+iostream
+-
+fstream
+-
+GL/freeglut.h
 -
 

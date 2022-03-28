@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1
+CMAKE_SOURCE_DIR = /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build
+CMAKE_BINARY_DIR = /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/railway_world.dir/depend.make
@@ -59,48 +59,62 @@ include CMakeFiles/railway_world.dir/flags.make
 
 CMakeFiles/railway_world.dir/RailwayWorld.cpp.o: CMakeFiles/railway_world.dir/flags.make
 CMakeFiles/railway_world.dir/RailwayWorld.cpp.o: ../RailwayWorld.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/railway_world.dir/RailwayWorld.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/railway_world.dir/RailwayWorld.cpp.o -c /home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailwayWorld.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/railway_world.dir/RailwayWorld.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/railway_world.dir/RailwayWorld.cpp.o -c /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailwayWorld.cpp
 
 CMakeFiles/railway_world.dir/RailwayWorld.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/railway_world.dir/RailwayWorld.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailwayWorld.cpp > CMakeFiles/railway_world.dir/RailwayWorld.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailwayWorld.cpp > CMakeFiles/railway_world.dir/RailwayWorld.cpp.i
 
 CMakeFiles/railway_world.dir/RailwayWorld.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/railway_world.dir/RailwayWorld.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailwayWorld.cpp -o CMakeFiles/railway_world.dir/RailwayWorld.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailwayWorld.cpp -o CMakeFiles/railway_world.dir/RailwayWorld.cpp.s
 
 CMakeFiles/railway_world.dir/RailModels.cpp.o: CMakeFiles/railway_world.dir/flags.make
 CMakeFiles/railway_world.dir/RailModels.cpp.o: ../RailModels.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/railway_world.dir/RailModels.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/railway_world.dir/RailModels.cpp.o -c /home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailModels.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/railway_world.dir/RailModels.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/railway_world.dir/RailModels.cpp.o -c /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailModels.cpp
 
 CMakeFiles/railway_world.dir/RailModels.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/railway_world.dir/RailModels.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailModels.cpp > CMakeFiles/railway_world.dir/RailModels.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailModels.cpp > CMakeFiles/railway_world.dir/RailModels.cpp.i
 
 CMakeFiles/railway_world.dir/RailModels.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/railway_world.dir/RailModels.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailModels.cpp -o CMakeFiles/railway_world.dir/RailModels.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/RailModels.cpp -o CMakeFiles/railway_world.dir/RailModels.cpp.s
 
 CMakeFiles/railway_world.dir/assignmentfuncs.cpp.o: CMakeFiles/railway_world.dir/flags.make
 CMakeFiles/railway_world.dir/assignmentfuncs.cpp.o: ../assignmentfuncs.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/railway_world.dir/assignmentfuncs.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/railway_world.dir/assignmentfuncs.cpp.o -c /home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/assignmentfuncs.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/railway_world.dir/assignmentfuncs.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/railway_world.dir/assignmentfuncs.cpp.o -c /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/assignmentfuncs.cpp
 
 CMakeFiles/railway_world.dir/assignmentfuncs.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/railway_world.dir/assignmentfuncs.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/assignmentfuncs.cpp > CMakeFiles/railway_world.dir/assignmentfuncs.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/assignmentfuncs.cpp > CMakeFiles/railway_world.dir/assignmentfuncs.cpp.i
 
 CMakeFiles/railway_world.dir/assignmentfuncs.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/railway_world.dir/assignmentfuncs.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/assignmentfuncs.cpp -o CMakeFiles/railway_world.dir/assignmentfuncs.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/assignmentfuncs.cpp -o CMakeFiles/railway_world.dir/assignmentfuncs.cpp.s
+
+CMakeFiles/railway_world.dir/loadTGA.cpp.o: CMakeFiles/railway_world.dir/flags.make
+CMakeFiles/railway_world.dir/loadTGA.cpp.o: ../loadTGA.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/railway_world.dir/loadTGA.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/railway_world.dir/loadTGA.cpp.o -c /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/loadTGA.cpp
+
+CMakeFiles/railway_world.dir/loadTGA.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/railway_world.dir/loadTGA.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/loadTGA.cpp > CMakeFiles/railway_world.dir/loadTGA.cpp.i
+
+CMakeFiles/railway_world.dir/loadTGA.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/railway_world.dir/loadTGA.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/loadTGA.cpp -o CMakeFiles/railway_world.dir/loadTGA.cpp.s
 
 # Object files for target railway_world
 railway_world_OBJECTS = \
 "CMakeFiles/railway_world.dir/RailwayWorld.cpp.o" \
 "CMakeFiles/railway_world.dir/RailModels.cpp.o" \
-"CMakeFiles/railway_world.dir/assignmentfuncs.cpp.o"
+"CMakeFiles/railway_world.dir/assignmentfuncs.cpp.o" \
+"CMakeFiles/railway_world.dir/loadTGA.cpp.o"
 
 # External object files for target railway_world
 railway_world_EXTERNAL_OBJECTS =
@@ -108,13 +122,15 @@ railway_world_EXTERNAL_OBJECTS =
 railway_world: CMakeFiles/railway_world.dir/RailwayWorld.cpp.o
 railway_world: CMakeFiles/railway_world.dir/RailModels.cpp.o
 railway_world: CMakeFiles/railway_world.dir/assignmentfuncs.cpp.o
+railway_world: CMakeFiles/railway_world.dir/loadTGA.cpp.o
 railway_world: CMakeFiles/railway_world.dir/build.make
 railway_world: /usr/lib/x86_64-linux-gnu/libGLU.so
 railway_world: /usr/lib/x86_64-linux-gnu/libglut.so
 railway_world: /usr/lib/x86_64-linux-gnu/libGLX.so
 railway_world: /usr/lib/x86_64-linux-gnu/libOpenGL.so
+railway_world: /usr/lib/x86_64-linux-gnu/libXi.so
 railway_world: CMakeFiles/railway_world.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable railway_world"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable railway_world"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/railway_world.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -127,6 +143,6 @@ CMakeFiles/railway_world.dir/clean:
 .PHONY : CMakeFiles/railway_world.dir/clean
 
 CMakeFiles/railway_world.dir/depend:
-	cd /home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1 /home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1 /home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build /home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build /home/cosc363/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles/railway_world.dir/DependInfo.cmake --color=$(COLOR)
+	cd /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1 /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1 /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build /csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles/railway_world.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/railway_world.dir/depend
 

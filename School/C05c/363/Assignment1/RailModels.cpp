@@ -20,51 +20,39 @@ using namespace std;
 
 float white[4] = {1., 1., 1., 1.};
 float black[4] = {0};
-GLuint txId;
-    
+
 //--------------- GROUND PLANE ------------------------------------
 // This is a square shaped region on the xz-plane of size 400x400 units
 // centered at the origin.  This region is constructed using small quads
 // of unit size, to facilitate rendering of spotlights
 //-----------------------------------------------------------------
 
-void loadTexture()				
-{
-	glGenTextures(1, &txId);
 
-	glBindTexture(GL_TEXTURE_2D, txId);  //Use this texture
-  loadTGA("Dirt 00 seamless.tga");
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	//Set texture parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);//Set texture parameters
-	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-	
-}
 
-void floor()
+void floor(GLuint txId[])
 {
-    //loadTexture();
-    //glBindTexture(GL_TEXTURE_2D, txId);
-    //glEnable(GL_TEXTURE_2D);
-    glColor3f(0.3, 0.3, 0.3);
+    load_floor_texture(txId);
+    glEnable(GL_TEXTURE_2D);
+    glColor3f(1, 1, 1);
     glNormal3f(0.0, 1.0, 0.0);
 
-    //The floor is made up of several tiny squares on a 400 x 400 grid. Each square has a unit size.
+    // big ass quad for floor
     glMaterialfv(GL_FRONT, GL_SPECULAR, black);
     glBegin(GL_QUADS);
-    for(int i = -200; i < 200; i++)
-    {
-        for(int j = -200;  j < 200; j++)
-        {
-            glVertex3f(i, 0, j);
-            glVertex3f(i, 0, j+1);
-            glVertex3f(i+1, 0, j+1);
-            glVertex3f(i+1, 0, j);
-        }
-    }
+        glTexCoord2f(0, 0);
+        glVertex3f(-400, 0, -400);
+
+        glTexCoord2f(4, 0);
+        glVertex3f(400, 0, -400);
+
+        glTexCoord2f(4, 4);
+        glVertex3f(400, 0, 400);
+
+        glTexCoord2f(0, 4);
+        glVertex3f(-400, 0, 400);
     glEnd();
     glMaterialfv(GL_FRONT, GL_SPECULAR, white);
+    glDisable(GL_TEXTURE_2D);
 
 }
 
@@ -168,35 +156,35 @@ static void sleeper(float pix, float piz, float vix, float viz, float uix, float
   S2x = pix - vix*s1; S2z = piz - viz*s1;
   S3x = six + vix*s1; S3z = siz + viz*s1;
   S4x = six - vix*s1; S4z = siz - viz*s1;
-  
+
   // top of sleeper
-  glNormal3f(0, 1, 0); 
+  glNormal3f(0, 1, 0);
   glVertex3f(S1x, height, S1z);
   glVertex3f(S3x, height, S3z);
   glVertex3f(S4x, height, S4z);
   glVertex3f(S2x, height, S2z);
-  
+
   // left side
   glNormal3f(1, 0, 0);
   glVertex3f(S2x, 0, S2z);
   glVertex3f(S2x, height, S2z);
   glVertex3f(S4x, height, S4z);
   glVertex3f(S4x, 0, S4z);
-  
+
   // right side
   glNormal3f(-1, 0, 0);
   glVertex3f(S3x, height, S3z);
   glVertex3f(S1x, height, S1z);
   glVertex3f(S1x, 0, S1z);
   glVertex3f(S3x, 0 , S3z);
-  
+
   // back side
   glNormal3f(0, 0, 1);
   glVertex3f(S2x, 0, S2z);
   glVertex3f(S1x, 0, S1z);
   glVertex3f(S1x, height, S1z);
   glVertex3f(S2x, height, S2z);
-  
+
   // front side
   glNormal3f(0, 0, -1);
   glVertex3f(S4x, 0, S4z);
@@ -229,19 +217,22 @@ void sleepers(std::vector<std::pair<float, float>>& line_array, float s1, float 
 }
 
 
-void rail_bed(std::vector<std::pair<float, float>>& line_array, int n_points,  float major, float minor)
+void rail_bed(std::vector<std::pair<float, float>>& line_array, int n_points,  float major, float minor, GLuint txId[])
 {
-	int n_line_points = line_array.size();
-	
-	float vx, vy, vz;
-	float wx, wy, wz;
-	float tx, ty, tz;
-	
-	float theta = 0;
-	float theta_step = M_PI / n_points ;
-	
-	for (int i = 0; i < n_line_points; i++) {
-		//pi, pi+1, and pi+2 (points on medium line)
+    int n_line_points = line_array.size();
+
+    float vx, vy, vz;
+    float wx, wy, wz;
+    float tx, ty, tz;
+
+    float theta = 0;
+    float theta_step = M_PI / n_points;
+
+    load_railbed_texture(txId);
+    glEnable(GL_TEXTURE_2D);
+
+    for (int i = 0; i < n_line_points; i++) {
+        //pi, pi+1, and pi+2 (points on medium line)
         std::pair<float, float> pi = line_array[i % n_line_points];
         std::pair<float, float> pi_p1 = line_array[(i + 1) % n_line_points];
         std::pair<float, float> pi_p2 = line_array[(i + 2) % n_line_points];
@@ -257,38 +248,45 @@ void rail_bed(std::vector<std::pair<float, float>>& line_array, int n_points,  f
         //calcute vi, vi+1 (normal vector prep to ui and ui+1)
         std::pair<float, float> vi = {ui.second, -ui.first};
         std::pair<float, float> vi_p1 = {ui_p1.second, -ui_p1.first};
-        
-        
-		// compute the eplipices centred at pi and pi+1
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glColor3f(1, 1, 1);
-		glNormal3f(0, 1, 0);
-		glBegin(GL_QUAD_STRIP);
+
+
+        // compute the eplipices centred at pi and pi+1
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glColor3f(1, 1, 1);
+        glNormal3f(0, 1, 0);
+        glBegin(GL_QUAD_STRIP);
+        int j = 0;
         while (theta <= M_PI) {
-			vx = pi.first + major*cos(theta)*vi.first;
-			vy = minor*sin(theta);
-			vz = pi.second + major*cos(theta)*vi.second;
-			
-			wx = pi_p1.first + major*cos(theta)*vi_p1.first;
-			wy = minor*sin(theta);
-			wz = pi_p1.second + major*cos(theta)*vi_p1.second;
-			
-			tx = pi_p1.first + major*cos(theta + theta_step)*vi_p1.first;
-			ty = minor*sin(theta + theta_step);
-			tz = pi_p1.second + major*cos(theta + theta_step)*vi_p1.second;
-			
-			normal(vx, vy, vz, wx, wy, wz, tx, ty, tz);
-			
-			glVertex3f(vx, vy, vz);
-			glVertex3f(wx, wy, wz);
-			
-			theta += theta_step;
-		}
-		glEnd();
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		theta = 0;
-	}
+            vx = pi.first + major*cos(theta)*vi.first;
+            vy = minor*sin(theta);
+            vz = pi.second + major*cos(theta)*vi.second;
+
+            wx = pi_p1.first + major*cos(theta)*vi_p1.first;
+            wy = minor*sin(theta);
+            wz = pi_p1.second + major*cos(theta)*vi_p1.second;
+
+            tx = pi_p1.first + major*cos(theta + theta_step)*vi_p1.first;
+            ty = minor*sin(theta + theta_step);
+            tz = pi_p1.second + major*cos(theta + theta_step)*vi_p1.second;
+
+            normal(vx, vy, vz, wx, wy, wz, tx, ty, tz);
+
+            glTexCoord2f((float)j/(n_points - 1), 0);
+            glVertex3f(vx, vy, vz);
+
+            glTexCoord2f((float)j/(n_points - 1), 1);
+            glVertex3f(wx, wy, wz);
+
+            theta += theta_step;
+            j++;
+        }
+        glEnd();
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        theta = 0;
+        j = 0;
+    }
+    glDisable(GL_TEXTURE_2D);
 }
 
 //--------------- MODEL BASE --------------------------------------

@@ -12,4 +12,7 @@ CMakeFiles/railway_world.dir/RailwayWorld.cpp.o: ../assignmentfuncs.h
 
 CMakeFiles/railway_world.dir/assignmentfuncs.cpp.o: ../assignmentfuncs.cpp
 CMakeFiles/railway_world.dir/assignmentfuncs.cpp.o: ../assignmentfuncs.h
+CMakeFiles/railway_world.dir/assignmentfuncs.cpp.o: ../loadTGA.h
+
+CMakeFiles/railway_world.dir/loadTGA.cpp.o: ../loadTGA.cpp
 
