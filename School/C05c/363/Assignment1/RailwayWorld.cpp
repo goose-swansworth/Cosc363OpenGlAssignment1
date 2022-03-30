@@ -16,6 +16,7 @@
 #include "RailModels.h"
 #include "assignmentfuncs.h"
 #include "skybox.h"
+
 using namespace std;
 
 
@@ -38,6 +39,7 @@ float rail_out = 2.75;
 float track_height = 1;
 
 int icurr = 0;
+GLuint txID[2];
 
 //---------------------------------------------------------------------
 void initialize(void)
@@ -93,11 +95,29 @@ void display(void)
    //speen
    glRotatef(theta, 0, 1, 0);
 
-   floor();
+   floor(txId);
    track_loop(line_array, rail_in, rail_out, track_height);
-   sleepers(line_array, rail_in*2, rail_in*2/5, track_height/2, 3);
-   rail_bed(line_array, 10, rail_out*2, track_height/3);
-   freight_engine(rail_in, rail_out, track_height, 12, 3./4, 0.5);
+   sleepers(line_array, rail_in*2, rail_in*2/5, track_height/2, 4);
+   rail_bed(line_array, 10, rail_out*2, track_height/4, txId);
+
+    //int num_wagons = 4;
+
+    //wagons
+    //for (int i = num_wagons; i > 0; i--) {
+    //  glPushMatrix();
+    //        glRotatef(-10.5 * i, 0, 1, 0);
+    //        glTranslatef(0, 1, -120);
+    //        wagon();
+    //    glPopMatrix();
+    //}
+
+    //locomotive
+   //glPushMatrix();
+   //     glTranslatef(0, 1, -120);
+    //    glLightfv(GL_LIGHT1, GL_POSITION, spotlgt_pos); //spot postion
+    //    glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spotlgt_dir); //spot direction
+    //    engine();
+   //glPopMatrix();
 
 
 
@@ -186,8 +206,8 @@ int main(int argc, char** argv)
     ifstream medline_file("mediumline.txt");
     parseMedianlineFile(medline_file, line_array);
 
-    //load textures
-    load_sky_textures(txId);
+    glGenTextures(2, txId);
+
    glutInit(&argc, argv);
    glutInitDisplayMode (GLUT_DOUBLE|GLUT_DEPTH);
    glutInitWindowSize (1024, 1024);

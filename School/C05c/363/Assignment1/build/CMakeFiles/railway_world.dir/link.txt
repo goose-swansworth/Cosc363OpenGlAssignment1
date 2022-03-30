@@ -1,1 +1,0 @@
-/usr/bin/c++ -g -L/usr/lib -lglut CMakeFiles/railway_world.dir/RailwayWorld.cpp.o CMakeFiles/railway_world.dir/RailModels.cpp.o CMakeFiles/railway_world.dir/assignmentfuncs.cpp.o CMakeFiles/railway_world.dir/skybox.cpp.o CMakeFiles/railway_world.dir/loadTGA.cpp.o -o railway_world  /usr/lib/libGLU.so /usr/lib/libGLX.so /usr/lib/libOpenGL.so -lglut 
