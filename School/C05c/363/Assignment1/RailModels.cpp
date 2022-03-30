@@ -143,7 +143,6 @@ void track_loop(std::vector<std::pair<float, float>>& line_array, float w1, floa
     glEnd();
 }
 
-
 static void sleeper(float pix, float piz, float vix, float viz, float uix, float uiz, float s1, float s2, float height)
 {
   // Far point on sleeper in direction of ui
@@ -195,7 +194,6 @@ static void sleeper(float pix, float piz, float vix, float viz, float uix, float
   glVertex3f(S3x, 0 , S3z);
 }
 
-
 void sleepers(std::vector<std::pair<float, float>>& line_array, float s1, float s2, float height, int step)
 {
   glColor4f(0.59*1/2,0.29*1/2,0.00, 1);
@@ -218,7 +216,6 @@ void sleepers(std::vector<std::pair<float, float>>& line_array, float s1, float 
   glMaterialfv(GL_FRONT, GL_SPECULAR, black);
 }
 
-
 void rail_bed(std::vector<std::pair<float, float>>& line_array, int n_points,  float major, float minor, GLuint txId[])
 {
     int n_line_points = line_array.size();
@@ -230,8 +227,8 @@ void rail_bed(std::vector<std::pair<float, float>>& line_array, int n_points,  f
     float theta = 0;
     float theta_step = M_PI / n_points;
 
-    load_railbed_texture(txId);
-    glEnable(GL_TEXTURE_2D);
+    //load_railbed_texture(txId);
+    //glEnable(GL_TEXTURE_2D);
 
     for (int i = 0; i < n_line_points; i++) {
         //pi, pi+1, and pi+2 (points on medium line)
@@ -274,10 +271,10 @@ void rail_bed(std::vector<std::pair<float, float>>& line_array, int n_points,  f
 
             normal(vx, vy, vz, wx, wy, wz, tx, ty, tz);
 
-            glTexCoord2f((float)j/(n_points - 1), 0);
+            //glTexCoord2f((float)j/(n_points - 1), 0);
             glVertex3f(vx, vy, vz);
 
-            glTexCoord2f((float)j/(n_points - 1), 1);
+            //glTexCoord2f((float)j/(n_points - 1), 1);
             glVertex3f(wx, wy, wz);
 
             theta += theta_step;
@@ -288,9 +285,8 @@ void rail_bed(std::vector<std::pair<float, float>>& line_array, int n_points,  f
         theta = 0;
         j = 0;
     }
-    glDisable(GL_TEXTURE_2D);
+    //glDisable(GL_TEXTURE_2D);
 }
-
 
 void freight_base(float rail_in, float rail_out, float rail_height, float base_len, float base_height, float wheel_rad)
 {
@@ -496,7 +492,106 @@ void freight_engine(float rail_in, float rail_out, float rail_height, float base
       glVertex3f(-base_len/2+0.5, engine_h+2, engine_front_w);
     glEnd();
   glPopMatrix();
-
-
 }
+
+void boxcar(float rail_in, float rail_out, float rail_height, float base_len, float base_height, float wheel_rad)
+{
+    freight_base(rail_in, rail_out, rail_height, base_len, base_height, wheel_rad);
+    float base_h = rail_height + 2*wheel_rad;
+    float height = base_h + 4;
+    glColor3f(0, 0.4, 0);
+    glPushMatrix();
+    glBegin(GL_QUADS);
+      //top
+      glNormal3f(0, 1, 0);
+      glVertex3f(base_len/2-0.5, height, -rail_out);
+      glVertex3f(-base_len/2+0.5, height, -rail_out);
+      glVertex3f(-base_len/2+0.5, height, rail_out);
+      glVertex3f(base_len/2-0.5, height, rail_out);
+
+      //sides
+      glNormal3f(1, 0, 0);
+      glVertex3f(base_len/2-0.5, height, -rail_out);
+      glVertex3f(-base_len/2+0.5, height, -rail_out);
+      glVertex3f(-base_len/2+0.5, base_h, -rail_out);
+      glVertex3f(base_len/2-0.5, base_h, -rail_out);
+
+      glNormal3f(-1, 0, 0);
+      glVertex3f(base_len/2-0.5, height, rail_out);
+      glVertex3f(-base_len/2+0.5, height, rail_out);
+      glVertex3f(-base_len/2+0.5, base_h, rail_out);
+      glVertex3f(base_len/2-0.5, base_h, rail_out);
+
+      //sides
+      glNormal3f(0, 0, 1);
+      glVertex3f(base_len/2-0.5, height, -rail_out);
+      glVertex3f(base_len/2-0.5, height, rail_out);
+      glVertex3f(base_len/2-0.5, base_h, rail_out);
+      glVertex3f(base_len/2-0.5, base_h, -rail_out);
+
+      glNormal3f(0, 0, -1);
+      glVertex3f(-base_len/2+0.5, height, -rail_out);
+      glVertex3f(-base_len/2+0.5, height, rail_out);
+      glVertex3f(-base_len/2+0.5, base_h, rail_out);
+      glVertex3f(-base_len/2+0.5, base_h, -rail_out);
+    glEnd();
+    glPopMatrix();
+}
+
+void tanker(float rail_in, float rail_out, float rail_height, float base_len, float base_height, float wheel_rad)
+{
+    freight_base(rail_in, rail_out, rail_height, base_len, base_height, wheel_rad);
+    float base_h = rail_height + 2*wheel_rad;
+    float rad = (base_h + 3)/2;
+    glColor3f(0, 0, 0.5);
+    GLUquadric *q = gluNewQuadric();
+    //tank
+    glPushMatrix();
+      glTranslatef(-base_len/2+0.5, base_h + rad, 0);
+      glRotatef(90, 0, 1, 0);
+      gluCylinder(q, rad, rad, base_len - 1, 30, 30);
+    glPopMatrix();
+    //ends
+    glPushMatrix();
+      glTranslatef(-base_len/2+0.5, base_h + rad, 0);
+      glRotatef(-90, 0, 1, 0);
+      gluDisk(q, 0, rad, 30, 30);
+    glPopMatrix();
+    glPushMatrix();
+      glTranslatef(base_len/2-0.5, base_h + rad, 0);
+      glRotatef(90, 0, 1, 0);
+      gluDisk(q, 0, rad, 30, 30);
+    glPopMatrix();
+}
+
+void log_car(float rail_in, float rail_out, float rail_height, float base_len, float base_height, float wheel_rad)
+{
+    freight_base(rail_in, rail_out, rail_height, base_len, base_height, wheel_rad);
+    float base_h = rail_height + 2*wheel_rad;
+    float rad = (rail_out)/4;
+    glColor3f(0.7, 0.5, 0.1);
+    GLUquadric *q = gluNewQuadric();
+    //logs
+    float start_z;
+    for (int i = 0; i < 3; i++) {
+        start_z = -rail_out+rad + rad*i;
+        for (int j = 0; j < 4 - i; j++) {
+            glPushMatrix();
+              glTranslatef(-base_len/2+0.5, base_h+rad+2*rad*i, start_z+2*rad*j);
+              glRotatef(90, 0, 1, 0);
+              gluCylinder(q, rad, rad, base_len - 1, 30, 30);
+            glPopMatrix();
+            glPushMatrix();
+              glTranslatef(-base_len/2+0.5, base_h+rad+2*rad*i, start_z+2*rad*j);
+              glRotatef(-90, 0, 1, 0);
+              gluDisk(q, 0, rad, 30, 30);
+            glPopMatrix();
+            glPushMatrix();
+              glTranslatef(base_len/2-0.5, base_h+rad+2*rad*i, start_z+2*rad*j);
+              glRotatef(-90, 0, 1, 0);
+              gluDisk(q, 0, rad, 30, 30);
+            glPopMatrix();
+        }
+     }
+  }
 

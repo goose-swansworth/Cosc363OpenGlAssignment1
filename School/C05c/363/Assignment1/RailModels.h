@@ -22,6 +22,12 @@ void freight_base(float rail_in, float rail_out, float rail_height, float base_l
 
 void freight_engine(float rail_in, float rail_out, float rail_height, float base_len, float base_height, float wheel_rad);
 
+void boxcar(float rail_in, float rail_out, float rail_height, float base_len, float base_height, float wheel_rad);
+
+void tanker(float rail_in, float rail_out, float rail_height, float base_len, float base_height, float wheel_rad);
+
+void log_car(float rail_in, float rail_out, float rail_height, float base_len, float base_height, float wheel_rad);
+
 void engine();
 
 void wagon();

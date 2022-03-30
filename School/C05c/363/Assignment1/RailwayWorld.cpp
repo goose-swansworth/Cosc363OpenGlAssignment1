@@ -19,6 +19,7 @@
 
 using namespace std;
 
+#define TO_DEGREES 180 / M_PI
 
 GLuint txId[6]; 
 
@@ -27,12 +28,17 @@ float theta = 0;
 
 // camara postions
 float lookrot = 0;
-float camx = 200;
-float camy = 200;
-float camz = 200;
+float camx = 50;
+float camy = 50;
+float camz = 50;
 float lookx = 0;
 float looky = 0;
 float lookz = 0;
+
+float trainx = 0;
+float trainy = 0;
+float trainz = 0;
+
 
 float rail_in = 2;
 float rail_out = 2.75;
@@ -97,57 +103,60 @@ void display(void)
 
    floor(txId);
    track_loop(line_array, rail_in, rail_out, track_height);
-   sleepers(line_array, rail_in*2, rail_in*2/5, track_height/2, 4);
+   sleepers(line_array, rail_in*2, rail_in*2/5, track_height/2, 3);
    rail_bed(line_array, 10, rail_out*2, track_height/4, txId);
 
-    //int num_wagons = 4;
-
-    //wagons
-    //for (int i = num_wagons; i > 0; i--) {
-    //  glPushMatrix();
-    //        glRotatef(-10.5 * i, 0, 1, 0);
-    //        glTranslatef(0, 1, -120);
-    //        wagon();
-    //    glPopMatrix();
-    //}
-
-    //locomotive
-   //glPushMatrix();
-   //     glTranslatef(0, 1, -120);
-    //    glLightfv(GL_LIGHT1, GL_POSITION, spotlgt_pos); //spot postion
-    //    glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spotlgt_dir); //spot direction
-    //    engine();
-   //glPopMatrix();
-
-
-
-   glLightfv(GL_LIGHT0, GL_POSITION, lgt_pos);   //light position
-   //glLightfv(GL_LIGHT1, GL_POSITION, lgt1_pos);
+   glLightfv(GL_LIGHT0, GL_POSITION, lgt_pos);
    skybox(txId);
 
    //glLightfv(GL_LIGHT1, GL_POSITION, spotlgt_pos); //spot postion
-        //glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spotlgt_dir); //spot direction
+   //glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spotlgt_dir); //spot direction
 
-
-   //locomotive
-   glPushMatrix();
-    std::pair<float, float> pi = line_array[icurr % line_array.size()];
-    std::pair<float, float> pi_p1 = line_array[(icurr + 5) % line_array.size()];
-    std::pair<float, float> ui = vec_in_dir(pi, pi_p1);
-    normalize_2d_vec(ui);
-    glTranslatef(pi.first, track_height, pi.second);
-    glRotatef(atan2(ui.second, -ui.first) + 90, 0, 1, 0);
-    freight_engine(rail_in, rail_out, track_height, 12, 1, 0.5);
-   glPopMatrix();
-   glutSwapBuffers();   //Useful for animation
+   float base_len = 12;
+   std::pair<float, float> pi;
+   std::pair<float, float> pi_p1;
+   std::pair<float, float> ui;
+   int m = 13;
+   int n_points = line_array.size();
+   //postion models on track
+    for (int i = 0; i < 4; i++) {
+        glPushMatrix();
+            pi = line_array[(icurr + i*m) % n_points];
+            pi_p1 = line_array[((icurr + i*m) + 1) % n_points];
+            ui = vec_in_dir(pi, pi_p1);
+            normalize_2d_vec(ui);
+            glTranslatef(pi.first, track_height, pi.second);
+            glRotatef(atan2(ui.second, -ui.first)*TO_DEGREES, 0, 1, 0);
+            switch (i) {
+                case 3:
+                    glRotatef(180, 0, 1, 0);
+                    lookx = pi.first;
+                    looky = track_height;
+                    lookz = pi.second;
+                    freight_engine(rail_in, rail_out, track_height, base_len, 1, 0.5);
+                    break;
+                case 2:
+                    boxcar(rail_in, rail_out, track_height, base_len, 1, 0.5);
+                    break;
+                case 1:
+                    log_car(rail_in, rail_out, track_height, base_len, 1, 0.5);
+                    break;
+                case 0:
+                    tanker(rail_in, rail_out, track_height, base_len, 1, 0.5);
+                    break;
+            }
+        glPopMatrix();
+    }
+    glutSwapBuffers();
 }
 
 
 void train_move_timer(int value)
 {
     icurr++;
+    icurr = icurr % line_array.size();
     glutPostRedisplay();
-    glutTimerFunc(25, train_move_timer, 0);
+    glutTimerFunc(50, train_move_timer, 0);
 }
 
 void keyboard(unsigned char key, int x, int y)
@@ -170,6 +179,16 @@ void keyboard(unsigned char key, int x, int y)
             break;
         case ' ':
             camy++;
+            break;
+        case '2':
+            camx = 100;
+            camy = 100;
+            camz = 100;
+            break;
+        case '1':
+            camx = 50;
+            camy = 50;
+            camz = 50;
             break;
     }
     glutPostRedisplay();
@@ -208,17 +227,17 @@ int main(int argc, char** argv)
 
     glGenTextures(2, txId);
 
-   glutInit(&argc, argv);
-   glutInitDisplayMode (GLUT_DOUBLE|GLUT_DEPTH);
-   glutInitWindowSize (1024, 1024);
-   glutInitWindowPosition (50, 50);
-   glutCreateWindow ("Cum Express");
-   initialize ();
+    glutInit(&argc, argv);
+    glutInitDisplayMode (GLUT_DOUBLE|GLUT_DEPTH);
+    glutInitWindowSize (1024, 1024);
+    glutInitWindowPosition (50, 50);
+    glutCreateWindow ("Cum Express");
+    initialize ();
 
-   glutDisplayFunc(display);
-   //glutTimerFunc(25, train_move_timer, 0);
-   glutKeyboardFunc(keyboard);
-   glutSpecialFunc(special);
-   glutMainLoop();
-   return 0;
+    glutDisplayFunc(display);
+    glutTimerFunc(50, train_move_timer, 0);
+    glutKeyboardFunc(keyboard);
+    glutSpecialFunc(special);
+    glutMainLoop();
+    return 0;
 }
