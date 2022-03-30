@@ -5,31 +5,39 @@
 //  See Lab02.pdf for details
 //  ========================================================================
 
+#include <GL/gl.h>
+#include <cmath>
 #include <math.h>
 #include <GL/freeglut.h>
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <utility>
 #include "RailModels.h"
 #include "assignmentfuncs.h"
+#include "skybox.h"
 using namespace std;
+
+
+GLuint txId[6]; 
 
 std::vector<std::pair<float, float>> line_array = {};
 float theta = 0;
 
 // camara postions
 float lookrot = 0;
-float camx = 100;
-float camy = 100;
-float camz = 100;
+float camx = 200;
+float camy = 200;
+float camz = 200;
 float lookx = 0;
 float looky = 0;
 float lookz = 0;
 
-float w1 = 3;
-float w2 = 4;
-float track_height = 2;
+float rail_in = 2;
+float rail_out = 2.75;
+float track_height = 1;
 
+int icurr = 0;
 
 //---------------------------------------------------------------------
 void initialize(void)
@@ -47,9 +55,9 @@ void initialize(void)
     glLightfv(GL_LIGHT0, GL_SPECULAR, white);
 
 //  Spotlight
-    //glLightfv(GL_LIGHT1, GL_AMBIENT, grey);
-    //glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
-    //glLightfv(GL_LIGHT1, GL_SPECULAR, white);
+    glLightfv(GL_LIGHT1, GL_AMBIENT, grey);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, white);
     //glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 30.0);
     //glLightf(GL_LIGHT1, GL_SPOT_EXPONENT,0.01);
 
@@ -71,6 +79,7 @@ void initialize(void)
 void display(void)
 {
    float lgt_pos[] = {0.0f, 50.0f, 0.0f, 1.0f};  //light0 position (directly above the origin)
+   //float lgt1_pos[] = {50.f, 50.0f, 50.0f, 1.0f};
    //float spotlgt_pos[] = {-10, 14, 0, 1};
    //float spotlgt_dir[] = {-1, -1, 0};
 
@@ -80,45 +89,45 @@ void display(void)
    glLoadIdentity();
 
    gluLookAt (camx,camy,camz, lookx,looky,lookz, 0.0, 1.0, 0.0);
-   glLightfv(GL_LIGHT0, GL_POSITION, lgt_pos);   //light position
 
    //speen
    glRotatef(theta, 0, 1, 0);
 
    floor();
-   track_loop(line_array, w1, w2, track_height);
-   sleepers(line_array, w1*2, w1*2/5, track_height/2);
-   rail_bed(line_array, 10, w2*2, track_height/4);
-
-    //int num_wagons = 4;
-
-    //wagons
-    //for (int i = num_wagons; i > 0; i--) {
-    //  glPushMatrix();
-    //        glRotatef(-10.5 * i, 0, 1, 0);
-    //        glTranslatef(0, 1, -120);
-    //        wagon();
-    //    glPopMatrix();
-    //}
-
-    //locomotive
-   //glPushMatrix();
-   //     glTranslatef(0, 1, -120);
-    //    glLightfv(GL_LIGHT1, GL_POSITION, spotlgt_pos); //spot postion
-    //    glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spotlgt_dir); //spot direction
-    //    engine();
-   //glPopMatrix();
+   track_loop(line_array, rail_in, rail_out, track_height);
+   sleepers(line_array, rail_in*2, rail_in*2/5, track_height/2, 3);
+   rail_bed(line_array, 10, rail_out*2, track_height/3);
+   freight_engine(rail_in, rail_out, track_height, 12, 3./4, 0.5);
 
 
+
+   glLightfv(GL_LIGHT0, GL_POSITION, lgt_pos);   //light position
+   //glLightfv(GL_LIGHT1, GL_POSITION, lgt1_pos);
+   skybox(txId);
+
+   //glLightfv(GL_LIGHT1, GL_POSITION, spotlgt_pos); //spot postion
+        //glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spotlgt_dir); //spot direction
+
+
+   //locomotive
+   glPushMatrix();
+    std::pair<float, float> pi = line_array[icurr % line_array.size()];
+    std::pair<float, float> pi_p1 = line_array[(icurr + 5) % line_array.size()];
+    std::pair<float, float> ui = vec_in_dir(pi, pi_p1);
+    normalize_2d_vec(ui);
+    glTranslatef(pi.first, track_height, pi.second);
+    glRotatef(atan2(ui.second, -ui.first) + 90, 0, 1, 0);
+    freight_engine(rail_in, rail_out, track_height, 12, 1, 0.5);
+   glPopMatrix();
    glutSwapBuffers();   //Useful for animation
 }
 
 
-void train_rotate_timer(int value)
+void train_move_timer(int value)
 {
-    theta = theta + 0.5;
+    icurr++;
     glutPostRedisplay();
-    glutTimerFunc(25, train_rotate_timer, 0);
+    glutTimerFunc(25, train_move_timer, 0);
 }
 
 void keyboard(unsigned char key, int x, int y)
@@ -135,6 +144,12 @@ void keyboard(unsigned char key, int x, int y)
             break;
         case 'a':
             theta--;
+            break;
+        case 'i':
+            icurr++;
+            break;
+        case ' ':
+            camy++;
             break;
     }
     glutPostRedisplay();
@@ -170,10 +185,9 @@ int main(int argc, char** argv)
     //Load median line
     ifstream medline_file("mediumline.txt");
     parseMedianlineFile(medline_file, line_array);
-    //for (std::pair<float, float>point : line_array) {
-    //    cout << point.first << "," << point.second << endl;
-    //}
 
+    //load textures
+    load_sky_textures(txId);
    glutInit(&argc, argv);
    glutInitDisplayMode (GLUT_DOUBLE|GLUT_DEPTH);
    glutInitWindowSize (1024, 1024);
@@ -182,7 +196,7 @@ int main(int argc, char** argv)
    initialize ();
 
    glutDisplayFunc(display);
-   //glutTimerFunc(25, train_rotate_timer, 0);
+   //glutTimerFunc(25, train_move_timer, 0);
    glutKeyboardFunc(keyboard);
    glutSpecialFunc(special);
    glutMainLoop();

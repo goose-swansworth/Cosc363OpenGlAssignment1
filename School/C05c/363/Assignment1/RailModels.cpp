@@ -5,14 +5,17 @@
 //  A collection of functions for generating the models for a railway scene
 //  ==========================================================================
 
+#include <GL/gl.h>
+#include <GL/glu.h>
 #include <cmath>
 #include "GL/freeglut.h"
+#include <exception>
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <utility>
 #include <vector>
 #include "RailModels.h"
-#include "loadTGA.h"
 #include "assignmentfuncs.h"
 using namespace std;
 
@@ -20,27 +23,12 @@ using namespace std;
 
 float white[4] = {1., 1., 1., 1.};
 float black[4] = {0};
-GLuint txId;
     
 //--------------- GROUND PLANE ------------------------------------
 // This is a square shaped region on the xz-plane of size 400x400 units
 // centered at the origin.  This region is constructed using small quads
 // of unit size, to facilitate rendering of spotlights
 //-----------------------------------------------------------------
-
-void loadTexture()				
-{
-	glGenTextures(1, &txId);
-
-	glBindTexture(GL_TEXTURE_2D, txId);  //Use this texture
-  loadTGA("Dirt 00 seamless.tga");
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	//Set texture parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);//Set texture parameters
-	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-	
-}
 
 void floor()
 {
@@ -206,12 +194,12 @@ static void sleeper(float pix, float piz, float vix, float viz, float uix, float
 }
 
 
-void sleepers(std::vector<std::pair<float, float>>& line_array, float s1, float s2, float height)
+void sleepers(std::vector<std::pair<float, float>>& line_array, float s1, float s2, float height, int step)
 {
   glColor4f(0.59*1/2,0.29*1/2,0.00, 1);
   glBegin(GL_QUADS);
   int num_points = line_array.size();
-  for (int i = 0; i < num_points; i+=4) {
+  for (int i = 0; i < num_points; i+=step) {
     //pi, pi+1 (points on medium line)
     std::pair<float, float> pi = line_array[i % num_points];
     std::pair<float, float> pi_p1 = line_array[(i + 4) % num_points];
@@ -263,9 +251,9 @@ void rail_bed(std::vector<std::pair<float, float>>& line_array, int n_points,  f
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glColor3f(1, 1, 1);
-		glNormal3f(0, 1, 0);
+		//glNormal3f(0, 1, 0);
 		glBegin(GL_QUAD_STRIP);
-        while (theta <= M_PI) {
+      while (theta <= M_PI) {
 			vx = pi.first + major*cos(theta)*vi.first;
 			vy = minor*sin(theta);
 			vz = pi.second + major*cos(theta)*vi.second;
@@ -291,91 +279,212 @@ void rail_bed(std::vector<std::pair<float, float>>& line_array, int n_points,  f
 	}
 }
 
-//--------------- MODEL BASE --------------------------------------
-// This is a common base for the locomotive and wagons
-// The base is of rectangular shape (20 length x 10 width x 2 height)
-// and has wheels and connectors attached.
-//-----------------------------------------------------------------
-void base()
+
+void freight_base(float rail_in, float rail_out, float rail_height, float base_len, float base_height, float wheel_rad)
 {
-    glColor4f(0.2, 0.2, 0.2, 1.0);   //Base color
+  float wheel_in = rail_out - 0.5;
+  float wx[12] = {base_len/2-1, base_len/2-2, base_len/2-3, -base_len/2+1, -base_len/2+2, -base_len/2+3,
+                  base_len/2-1, base_len/2-2, base_len/2-3, -base_len/2+1, -base_len/2+2, -base_len/2+3};
+  GLUquadric *q = gluNewQuadric();
+  glNormal3f(0, 1, 0);
+  //flat base
+  glPushMatrix();
+      glColor4f(0.1, 0.1, 0.1, 1.0);
+      glTranslatef(0, rail_height + wheel_rad, 0);
+      glScalef(base_len, base_height, 2*rail_out+1./2);
+      glutSolidCube(1);
+  glPopMatrix();
+  //block under base
+  glPushMatrix();
+      glColor4f(0, 0, 0, 1);
+      glTranslatef(0, rail_height, 0);
+      glScalef(base_len-1, 1, 2*(rail_out-1));
+      glutSolidCube(1);
+  glPopMatrix();
+  //wheels
+  for (int i = 0; i < 12; i++) {
     glPushMatrix();
-      glTranslatef(0.0, 4.0, 0.0);
-      glScalef(20.0, 2.0, 10.0);     //Size 20x10 units, thickness 2 units.
-      glutSolidCube(1.0);
-    glPopMatrix();
-
-    glPushMatrix();                 //Connector between wagons
-      glTranslatef(11.0, 4.0, 0.0);
-      glutSolidCube(2.0);
-    glPopMatrix();
-
-    //4 Wheels (radius = 2 units)
-    //x, z positions of wheels:
-    float wx[4] = {  -8,   8,   -8,    8 };
-    float wz[4] = { 5.1, 5.1, -5.1, -5.1 };
-    glColor4f(0.5, 0., 0., 1.0);    //Wheel color
-    GLUquadric *q = gluNewQuadric();   //Disc
-
-    for (int i = 0; i < 4; i++)
-    {
+      glColor4f(0.1, 0.1, 0.1, 1.0);
+      if (i < 6) {
         glPushMatrix();
-        glTranslatef(wx[i], 2.0, wz[i]);
-        gluDisk(q, 0.0, 2.0, 20, 2);
+          glTranslatef(wx[i], wheel_rad, wheel_in-wheel_rad);
+          gluCylinder(q, wheel_rad, wheel_rad, wheel_rad, 30, 30);
         glPopMatrix();
-    }
+        glPushMatrix();
+          glTranslatef(wx[i], wheel_rad, wheel_in);
+          gluDisk(q, 0, wheel_rad, 20, 2);
+        glPopMatrix();
+      } else {
+        glTranslatef(wx[i], wheel_rad, -wheel_in);
+        gluCylinder(q, wheel_rad, wheel_rad, wheel_rad, 30, 30);
+        gluDisk(q, 0, wheel_rad, 20, 2);
+      }
+    glPopMatrix();
+  }
+  float connector_rad = 0.5;
+  //connector front
+  glPushMatrix();
+      glColor3f(0.3, 0.3, 0.3);
+      glTranslatef(base_len/2+connector_rad, rail_height+wheel_rad, 0);
+      glRotatef(-90, 0, 1, 0);
+      gluCylinder(q, connector_rad, connector_rad, connector_rad, 30, 30);
+      gluDisk(q, 0, connector_rad, 20, 2);
+  glPopMatrix();
+  //connctor back
+  glPushMatrix();
+      glColor3f(0.3, 0.3, 0.3);
+      glTranslatef(-base_len/2-connector_rad, rail_height+wheel_rad, 0);
+      glRotatef(90, 0, 1, 0);
+      gluCylinder(q, connector_rad, connector_rad, connector_rad, 30, 30);
+      gluDisk(q, 0, connector_rad, 20, 2);
+  glPopMatrix();
 }
 
-//--------------- LOCOMOTIVE --------------------------------
-// This simple model of a locomotive consists of the base,
-// cabin and boiler
-//-----------------------------------------------------------
-void engine()
+void freight_engine(float rail_in, float rail_out, float rail_height, float base_len, float base_height, float wheel_rad)
 {
-    base();
+  freight_base(rail_in, rail_out, rail_height, base_len, base_height, wheel_rad);
+  float engine_base_h = rail_height + 2*wheel_rad;
+  float engine_h = engine_base_h + 2;
+  float engine_front_w = rail_out-0.25;
+  float base_w = 2*rail_out+1./2;
+  float front_end =  base_len/2-0.5;
+  // coords of front of engine
+  float xs[10] = {base_len/2-3, base_len/2-3, base_len/2-2, base_len/2-2, front_end, front_end, base_len/2-2, base_len/2-2, base_len/2-3, base_len/2-3};
+  float ys[10] = {engine_base_h, engine_h, engine_base_h, engine_h, engine_base_h, engine_h, engine_base_h, engine_h, engine_base_h, engine_h};
+  float zs[10] = {-engine_front_w, -engine_front_w, -engine_front_w, -engine_front_w, 0, 0, engine_front_w, engine_front_w, engine_front_w, engine_front_w};
+  // front of engine
+  glPushMatrix();
+  glColor3f(0.7, 0, 0);
+    glBegin(GL_QUAD_STRIP);
+      for (int i = 0; i < 10; i+=2) {
+        if (i == 2) {
+          glNormal3f(0, 0, 1);
+        }
+        if (i == 4 or i == 6) {
+          std::pair<float, float> temp1 = {xs[i-1], zs[i-1]};
+          std::pair<float, float> temp2 = {xs[i], zs[i]};
+          std::pair<float, float> n = vec_in_dir(temp1, temp2);
+          normalize_2d_vec(n);
+          glNormal3f(n.second, 0, -n.first);
+        }
+        if (i == 8) {
+          glNormal3f(0, 0, -1);
+        }
+        glVertex3f(xs[i], ys[i], zs[i]);
+        glVertex3f(xs[i+1], ys[i+1], zs[i+1]);
+      }
+    glEnd();
+    glBegin(GL_TRIANGLES);
+      glNormal3f(0, 1, 0);
+      glVertex3f(base_len/2-2, engine_h, engine_front_w);
+      glVertex3f(front_end, engine_h, 0);
+      glVertex3f(base_len/2-2, engine_h, -engine_front_w);
+    glEnd();
+    glBegin(GL_QUADS);
+      glNormal3f(0, 1, 0);
+      glVertex3f(base_len/2-3, engine_h, -engine_front_w);
+      glVertex3f(base_len/2-3, engine_h, engine_front_w);
+      glVertex3f(base_len/2-2, engine_h, engine_front_w);
+      glVertex3f(base_len/2-2, engine_h, -engine_front_w);
+    glEnd();
+  glPopMatrix();
+  // middle cab
+  glPushMatrix();
+    glBegin(GL_QUADS);
+      //sides
+      glNormal3f(1, 0, 0);
+      glVertex3f(base_len/2-3, engine_base_h, base_w/2);
+      glVertex3f(base_len/2-3, engine_h+1, base_w/2);
+      glVertex3f(base_len/2-3, engine_h+1, -base_w/2);
+      glVertex3f(base_len/2-3, engine_base_h, -base_w/2);
 
-    //Cab
-    glColor4f(0.8, 0.8, 0.0, 1.0);
-    glPushMatrix();
-      glTranslatef(7.0, 8.5, 0.0);
-      glScalef(6.0, 7.0, 10.0);
-      glutSolidCube(1.0);
-    glPopMatrix();
+      glNormal3f(-1, 0, 0);
+      glVertex3f(base_len/2-6, engine_base_h, base_w/2);
+      glVertex3f(base_len/2-6, engine_h+1, base_w/2);
+      glVertex3f(base_len/2-6, engine_h+1, -base_w/2);
+      glVertex3f(base_len/2-6, engine_base_h, -base_w/2);
 
-    glPushMatrix();
-      glTranslatef(6.0, 14.0, 0.0);
-      glScalef(4.0, 4.0, 8.0);
-      glutSolidCube(1.0);
-    glPopMatrix();
+      glNormal3f(0, 0, -1);
+      glVertex3f(base_len/2-3, engine_base_h, -base_w/2);
+      glVertex3f(base_len/2-3, engine_h+1, -base_w/2);
+      glVertex3f(base_len/2-6, engine_h+1, -base_w/2);
+      glVertex3f(base_len/2-6, engine_base_h, -base_w/2);
 
-    //Boiler
-    GLUquadric *q = gluNewQuadric();   //Cylinder
-    glPushMatrix();
-      glColor4f(0.5, 0., 0., 1.0);
-      glTranslatef(4.0, 10.0, 0.0);
-      glRotatef(-90.0, 0., 1., 0.);
-      gluCylinder(q, 5.0, 5.0, 14.0, 20, 5);
-      glTranslatef(0.0, 0.0, 14.0);
-      gluDisk(q, 0.0, 5.0, 20, 3);
-      glColor4f(1.0, 1.0, 0.0, 1.0);
-      glTranslatef(0.0, 4.0, 0.2);
-      gluDisk(q, 0.0, 1.0, 20,2);  //headlight!
-    glPopMatrix();
+      glNormal3f(0, 0, 1);
+      glVertex3f(base_len/2-3, engine_base_h, base_w/2);
+      glVertex3f(base_len/2-3, engine_h+1, base_w/2);
+      glVertex3f(base_len/2-6, engine_h+1, base_w/2);
+      glVertex3f(base_len/2-6, engine_base_h, base_w/2);
+
+      //roof
+      glNormal3f(0, 1, 2);
+      glVertex3f(base_len/2-3, engine_h+1, base_w/2);
+      glVertex3f(base_len/2-6, engine_h+1, base_w/2);
+      glVertex3f(base_len/2-6, engine_h+2, base_w/2-2);
+      glVertex3f(base_len/2-3, engine_h+2, base_w/2-2);
+
+      glNormal3f(0, 1, -2);
+      glVertex3f(base_len/2-3, engine_h+1, -base_w/2);
+      glVertex3f(base_len/2-6, engine_h+1, -base_w/2);
+      glVertex3f(base_len/2-6, engine_h+2, -base_w/2+2);
+      glVertex3f(base_len/2-3, engine_h+2, -base_w/2+2);
+
+      glNormal3f(0, 1, 0);
+      glVertex3f(base_len/2-3, engine_h+2, base_w/2-2);
+      glVertex3f(base_len/2-6, engine_h+2, base_w/2-2);
+      glVertex3f(base_len/2-6, engine_h+2, -base_w/2+2);
+      glVertex3f(base_len/2-3, engine_h+2, -base_w/2+2);
+    glEnd();
+    //window
+    glNormal3f(1, 0, 0);
+    glBegin(GL_TRIANGLE_FAN);
+      glVertex3f(base_len/2-3, engine_h+1, base_w/2);
+      glVertex3f(base_len/2-3, engine_h+1, -base_w/2);
+      glVertex3f(base_len/2-3, engine_h+2, -base_w/2+2);
+      glVertex3f(base_len/2-3, engine_h+2, base_w/2-2);
+    glEnd();
+    glNormal3f(-1, 0, 0);
+    glBegin(GL_TRIANGLE_FAN);
+      glVertex3f(base_len/2-6, engine_h+1, base_w/2);
+      glVertex3f(base_len/2-6, engine_h+1, -base_w/2);
+      glVertex3f(base_len/2-6, engine_h+2, -base_w/2+2);
+      glVertex3f(base_len/2-6, engine_h+2, base_w/2-2);
+    glEnd();
+    //back block
+    glColor3f(0.35, 0.35, 0.35);
+    glBegin(GL_QUADS);
+      glNormal3f(0, 0, 1);
+      glVertex3f(base_len/2-6, engine_base_h, engine_front_w);
+      glVertex3f(base_len/2-6, engine_h+2, engine_front_w);
+      glVertex3f(-base_len/2+0.5, engine_h+2, engine_front_w);
+      glVertex3f(-base_len/2+0.5, engine_base_h, engine_front_w);
+
+      glNormal3f(0, 0, -1);
+      glVertex3f(base_len/2-6, engine_base_h, -engine_front_w);
+      glVertex3f(base_len/2-6, engine_h+2, -engine_front_w);
+      glVertex3f(-base_len/2+0.5, engine_h+2, -engine_front_w);
+      glVertex3f(-base_len/2+0.5, engine_base_h, -engine_front_w);
+
+      glNormal3f(1, 0, 0);
+      glVertex3f(base_len/2-6, engine_base_h, engine_front_w);
+      glVertex3f(base_len/2-6, engine_h+2, engine_front_w);
+      glVertex3f(base_len/2-6, engine_h+2, -engine_front_w);
+      glVertex3f(base_len/2-6, engine_base_h, -engine_front_w);
+
+      glNormal3f(-1, 0, 0);
+      glVertex3f(-base_len/2+0.5, engine_base_h, engine_front_w);
+      glVertex3f(-base_len/2+0.5, engine_h+2, engine_front_w);
+      glVertex3f(-base_len/2+0.5, engine_h+2, -engine_front_w);
+      glVertex3f(-base_len/2+0.5, engine_base_h, -engine_front_w);
+
+      glNormal3f(0, 1, 0);
+      glVertex3f(base_len/2-6, engine_h+2, engine_front_w);
+      glVertex3f(base_len/2-6, engine_h+2, -engine_front_w);
+      glVertex3f(-base_len/2+0.5, engine_h+2, -engine_front_w);
+      glVertex3f(-base_len/2+0.5, engine_h+2, engine_front_w);
+    glEnd();
+  glPopMatrix();
+
 
 }
 
-//--------------- WAGON ----------------------------------
-// This simple model of a rail wagon consists of the base,
-// and a cube(!)
-//--------------------------------------------------------
-void wagon()
-{
-    base();
-
-    glColor4f(0.0, 1.0, 1.0, 1.0);
-    glPushMatrix();
-      glTranslatef(0.0, 10.0, 0.0);
-      glScalef(18.0, 10.0, 10.0);
-      glutSolidCube(1.0);
-    glPopMatrix();
-}
