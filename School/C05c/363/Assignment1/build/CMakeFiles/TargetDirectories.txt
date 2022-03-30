@@ -1,3 +1,0 @@
-/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles/rebuild_cache.dir
-/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles/edit_cache.dir
-/csse/users/kjr106/Desktop/Cosc363OpenGlAssignment1/School/C05c/363/Assignment1/build/CMakeFiles/railway_world.dir
