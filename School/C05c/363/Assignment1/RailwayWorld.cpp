@@ -25,15 +25,15 @@ GLuint txId[12];
 
 std::vector<std::pair<float, float>> line_array = {};
 float theta = 0;
+float look_angle = 0;
 
 // camara postions
-float lookrot = 0;
-float camx = -200;
-float camy = 200;
+float camx = 0;
+float camy = 8;
 float camz = 0;
 float lookx = 0;
-float looky = 0;
-float lookz = 0;
+float looky = 8;
+float lookz = 1;
 
 float trainx = 0;
 float trainy = 0;
@@ -94,9 +94,6 @@ void display(void) {
 
   gluLookAt(camx, camy, camz, lookx, looky, lookz, 0.0, 1.0, 0.0);
 
-  // speen
-  glRotatef(theta, 0, 1, 0);
-
   floor(txId);
   track_loop(line_array, rail_in, rail_out, track_height);
   sleepers(line_array, rail_in * 2, rail_in * 2 / 5, track_height / 2, 3);
@@ -143,6 +140,7 @@ void display(void) {
     }
     glPopMatrix();
   }
+  tunnel(5, 5, 2);
   glutSwapBuffers();
 }
 
@@ -156,16 +154,18 @@ void train_move_timer(int value) {
 void keyboard(unsigned char key, int x, int y) {
   switch (key) {
     case 'w':
-        camy--;
+        camx += 0.1*sin(look_angle);
+        camz -= 0.1*cos(look_angle);
         break;
     case 's':
-        camy++;
+        camx -= 0.1*sin(look_angle);
+        camz += 0.1*cos(look_angle);
         break;
     case 'd':
-        theta++;
+        look_angle += 0.1;
         break;
     case 'a':
-        theta--;
+        look_angle -= 0.1;
         break;
     case 'i':
         icurr++;
@@ -173,17 +173,36 @@ void keyboard(unsigned char key, int x, int y) {
     case ' ':
         camy++;
         break;
+    case '3':
+        camx = 200;
+        camy = 200;
+        camz = 200;
+        break;
     case '2':
         camx = 100;
         camy = 100;
         camz = 100;
         break;
     case '1':
-        camx = 50;
-        camy = 50;
-        camz = 50;
+        camx = 0;
+        camy = 25;
+        camz = 25;
+        lookx = 0;
+        looky = 0;
+        lookz = 0;
+        break;
+    case 'r': // reset
+        look_angle = 0;
+        camx = 0;
+        camy = 8;
+        camz = 0;
+        lookx = 0;
+        looky = 8;
+        lookz = 0;
         break;
   }
+  //lookx = camx + 200*sin(look_angle);
+  //lookz = camz - 200*cos(look_angle);
   glutPostRedisplay();
 }
 

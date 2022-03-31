@@ -272,10 +272,10 @@ void rail_bed(std::vector<std::pair<float, float>>& line_array, int n_points,  f
 
             normal(vx, vy, vz, wx, wy, wz, tx, ty, tz);
 
-            //glTexCoord2f((float)j/(n_points - 1), 0);
+            glTexCoord2f((float)j/(n_points - 1), 0);
             glVertex3f(vx, vy, vz);
 
-            //glTexCoord2f((float)j/(n_points - 1), 1);
+            glTexCoord2f((float)j/(n_points - 1), 1);
             glVertex3f(wx, wy, wz);
 
             theta += theta_step;
@@ -313,7 +313,7 @@ void freight_base(float rail_in, float rail_out, float rail_height, float base_l
   //wheels
   for (int i = 0; i < 12; i++) {
     glPushMatrix();
-      glColor4f(0.1, 0.1, 0.1, 1.0);
+      glColor4f(0, 0, 0, 1.0);
       if (i < 6) {
         glPushMatrix();
           glTranslatef(wx[i], wheel_rad, wheel_in-wheel_rad);
@@ -598,4 +598,19 @@ void log_car(float rail_in, float rail_out, float rail_height, float base_len, f
         }
      }
   }
+
+
+void tunnel(float h, float w, float in_rad)
+{
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glBegin(GL_TRIANGLE_FAN);
+        glVertex3f(0, h, 0);
+        glVertex3f(0, 0, 0);
+        glVertex3f(in_rad, 0, 0);
+        //TODO draw quader circle
+        glVertex3f(2*in_rad, h+h/2, 0);
+        glVertex3f(in_rad, h+h/2, 0);
+    glEnd();
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
 

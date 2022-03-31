@@ -10,43 +10,7 @@
 #include "loadTGA.h"
   //Texture ids
 //--------------------------------------------------------------------------------
-void load_sky_textures(GLuint txId[])
-{
 
-    //up
-
-
-    //down
-
-
-
-
-    //right
-    //glBindTexture(GL_TEXTURE_2D, txId[3]);
-    loadTGA("posx.tga");
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    //front
-    //glBindTexture(GL_TEXTURE_2D, txId[4]);
-    loadTGA("posz.tga");
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    //back
-    //glBindTexture(GL_TEXTURE_2D, txId[5]);
-    loadTGA("negz.tga");
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
-}
 
 void load_up_texture(GLuint txId[])
 {
@@ -72,6 +36,36 @@ void load_left_texture(GLuint txId[])
 {
     glBindTexture(GL_TEXTURE_2D, txId[3]);
     loadTGA("negx.tga");
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+
+void load_right_texture(GLuint txId[])
+{
+    glBindTexture(GL_TEXTURE_2D, txId[4]);
+    loadTGA("posx.tga");
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+
+void load_back_texture(GLuint txId[])
+{
+    glBindTexture(GL_TEXTURE_2D, txId[5]);
+    loadTGA("posz.tga");
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+
+void load_front_texture(GLuint txId[])
+{
+    glBindTexture(GL_TEXTURE_2D, txId[6]);
+    loadTGA("negz.tga");
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -124,13 +118,15 @@ void skybox(GLuint txId[])
     glDisable(GL_TEXTURE_2D);
 
     //right plane
+    glEnable(GL_TEXTURE_2D);
+    load_right_texture(txId);
     glBegin(GL_QUADS);
         glNormal3f(-1, 0, 0);
         glTexCoord2f(0, 0);
-        glVertex3f(box_size, -box_size, box_size);
+        glVertex3f(box_size, 0, box_size);
 
-        glTexCoord2f(0, 1);
-        glVertex3f(box_size, -box_size, -box_size);
+        glTexCoord2f(1, 0);
+        glVertex3f(box_size, 0, -box_size);
 
         glTexCoord2f(1, 1);
         glVertex3f(box_size, box_size, -box_size);
@@ -138,24 +134,33 @@ void skybox(GLuint txId[])
         glTexCoord2f(0, 1);
         glVertex3f(box_size, box_size, box_size);
     glEnd();
-    glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
+
 
     //front plane
+    glEnable(GL_TEXTURE_2D);
+    load_front_texture(txId);
     glBegin(GL_QUADS);
         glNormal3f(0, 0, -1);
-        glVertex3f(-box_size, -box_size, box_size);
-        glVertex3f(box_size, -box_size, box_size);
-        glVertex3f(box_size, box_size, box_size);
-        glVertex3f(-box_size, box_size, box_size);
-    glEnd();
-
-    //back plane
-    glBegin(GL_QUADS);
-        glNormal3f(0, 0, -1);
-        glVertex3f(-box_size, -box_size, -box_size);
-        glVertex3f(box_size, -box_size, -box_size);
-        glVertex3f(box_size, box_size, -box_size);
-        glVertex3f(-box_size, box_size, -box_size);
+        glTexCoord2f(0, 0); glVertex3f(-box_size, 0, box_size);
+        glTexCoord2f(1, 0); glVertex3f(box_size, 0, box_size);
+        glTexCoord2f(1, 1); glVertex3f(box_size, box_size, box_size);
+        glTexCoord2f(0, 1); glVertex3f(-box_size, box_size, box_size);
     glEnd();
     glDisable(GL_TEXTURE_2D);
+
+
+    //back plane
+    glEnable(GL_TEXTURE_2D);
+    load_back_texture(txId);
+    glBegin(GL_QUADS);
+        glNormal3f(0, 0, 1);
+        glTexCoord2f(0, 0); glVertex3f(-box_size, 0, -box_size);
+        glTexCoord2f(1, 0); glVertex3f(box_size, 0, -box_size);
+        glTexCoord2f(1, 1); glVertex3f(box_size, box_size, -box_size);
+        glTexCoord2f(0, 1); glVertex3f(-box_size, box_size, -box_size);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+
 }
