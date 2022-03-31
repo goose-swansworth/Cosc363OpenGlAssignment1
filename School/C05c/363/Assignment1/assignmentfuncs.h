@@ -20,3 +20,5 @@ void normal(float x1, float y1, float z1,
 void load_floor_texture(GLuint txId[]);
 
 void load_railbed_texture(GLuint txId[]);
+
+void load_boxcar_texture(GLuint txId[]);

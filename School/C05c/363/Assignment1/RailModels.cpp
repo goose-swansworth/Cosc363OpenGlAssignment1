@@ -494,48 +494,51 @@ void freight_engine(float rail_in, float rail_out, float rail_height, float base
   glPopMatrix();
 }
 
-void boxcar(float rail_in, float rail_out, float rail_height, float base_len, float base_height, float wheel_rad)
+void boxcar(float rail_in, float rail_out, float rail_height, float base_len, float base_height, float wheel_rad, GLuint txId[])
 {
     freight_base(rail_in, rail_out, rail_height, base_len, base_height, wheel_rad);
     float base_h = rail_height + 2*wheel_rad;
     float height = base_h + 4;
+    load_boxcar_texture(txId);
+    glEnable(GL_TEXTURE_2D);
     glColor3f(0, 0.4, 0);
     glPushMatrix();
     glBegin(GL_QUADS);
       //top
       glNormal3f(0, 1, 0);
-      glVertex3f(base_len/2-0.5, height, -rail_out);
-      glVertex3f(-base_len/2+0.5, height, -rail_out);
-      glVertex3f(-base_len/2+0.5, height, rail_out);
-      glVertex3f(base_len/2-0.5, height, rail_out);
+      glTexCoord2f(0, 0.5); glVertex3f(base_len/2-0.5, height, -rail_out);
+      glTexCoord2f(0, 1); glVertex3f(-base_len/2+0.5, height, -rail_out);
+      glTexCoord2f(1, 1); glVertex3f(-base_len/2+0.5, height, rail_out);
+      glTexCoord2f(1, 0.5); glVertex3f(base_len/2-0.5, height, rail_out);
 
       //sides
       glNormal3f(1, 0, 0);
-      glVertex3f(base_len/2-0.5, height, -rail_out);
-      glVertex3f(-base_len/2+0.5, height, -rail_out);
-      glVertex3f(-base_len/2+0.5, base_h, -rail_out);
-      glVertex3f(base_len/2-0.5, base_h, -rail_out);
+      glTexCoord2f(0, 0.5); glVertex3f(base_len/2-0.5, height, -rail_out);
+      glTexCoord2f(0, 1); glVertex3f(-base_len/2+0.5, height, -rail_out);
+      glTexCoord2f(1, 1); glVertex3f(-base_len/2+0.5, base_h, -rail_out);
+      glTexCoord2f(1, 0.5); glVertex3f(base_len/2-0.5, base_h, -rail_out);
 
       glNormal3f(-1, 0, 0);
-      glVertex3f(base_len/2-0.5, height, rail_out);
-      glVertex3f(-base_len/2+0.5, height, rail_out);
-      glVertex3f(-base_len/2+0.5, base_h, rail_out);
-      glVertex3f(base_len/2-0.5, base_h, rail_out);
+      glTexCoord2f(0, 0.5); glVertex3f(base_len/2-0.5, height, rail_out);
+      glTexCoord2f(0, 1); glVertex3f(-base_len/2+0.5, height, rail_out);
+      glTexCoord2f(1, 1); glVertex3f(-base_len/2+0.5, base_h, rail_out);
+      glTexCoord2f(1, 0.5); glVertex3f(base_len/2-0.5, base_h, rail_out);
 
       //sides
       glNormal3f(0, 0, 1);
-      glVertex3f(base_len/2-0.5, height, -rail_out);
-      glVertex3f(base_len/2-0.5, height, rail_out);
-      glVertex3f(base_len/2-0.5, base_h, rail_out);
-      glVertex3f(base_len/2-0.5, base_h, -rail_out);
+      glTexCoord2f(0, 0); glVertex3f(base_len/2-0.5, height, -rail_out);
+      glTexCoord2f(0, 0.5); glVertex3f(base_len/2-0.5, height, rail_out);
+      glTexCoord2f(0.5, 0.5); glVertex3f(base_len/2-0.5, base_h, rail_out);
+      glTexCoord2f(0.5, 0); glVertex3f(base_len/2-0.5, base_h, -rail_out);
 
       glNormal3f(0, 0, -1);
-      glVertex3f(-base_len/2+0.5, height, -rail_out);
-      glVertex3f(-base_len/2+0.5, height, rail_out);
-      glVertex3f(-base_len/2+0.5, base_h, rail_out);
-      glVertex3f(-base_len/2+0.5, base_h, -rail_out);
+      glTexCoord2f(0.5, 0); glVertex3f(-base_len/2+0.5, height, -rail_out);
+      glTexCoord2f(0.5, 0.5); glVertex3f(-base_len/2+0.5, height, rail_out);
+      glTexCoord2f(1, 0.5); glVertex3f(- base_len/2+0.5, base_h, rail_out);
+      glTexCoord2f(1, 0); glVertex3f(-base_len/2+0.5, base_h, -rail_out);
     glEnd();
     glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
 }
 
 void tanker(float rail_in, float rail_out, float rail_height, float base_len, float base_height, float wheel_rad)
