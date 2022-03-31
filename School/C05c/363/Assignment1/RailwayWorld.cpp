@@ -21,16 +21,16 @@ using namespace std;
 
 #define TO_DEGREES 180 / M_PI
 
-GLuint txId[6];
+GLuint txId[12];
 
 std::vector<std::pair<float, float>> line_array = {};
 float theta = 0;
 
 // camara postions
 float lookrot = 0;
-float camx = 50;
-float camy = 50;
-float camz = 50;
+float camx = -200;
+float camy = 200;
+float camz = 0;
 float lookx = 0;
 float looky = 0;
 float lookz = 0;
@@ -44,7 +44,6 @@ float rail_out = 2.75;
 float track_height = 1;
 
 int icurr = 0;
-GLuint txID[2];
 
 //---------------------------------------------------------------------
 void initialize(void) {
@@ -133,7 +132,7 @@ void display(void) {
       freight_engine(rail_in, rail_out, track_height, base_len, 1, 0.5);
       break;
     case 2:
-      boxcar(rail_in, rail_out, track_height, base_len, 1, 0.5, txID);
+      boxcar(rail_in, rail_out, track_height, base_len, 1, 0.5, txId);
       break;
     case 1:
       log_car(rail_in, rail_out, track_height, base_len, 1, 0.5);
@@ -216,17 +215,18 @@ int main(int argc, char **argv) {
   ifstream medline_file("mediumline.txt");
   parseMedianlineFile(medline_file, line_array);
 
-  glGenTextures(2, txId);
+  glGenTextures(12, txId);
+  load_floor_texture(txId);
 
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
   glutInitWindowSize(1024, 1024);
   glutInitWindowPosition(50, 50);
-  glutCreateWindow("Cum Express");
+  glutCreateWindow("Yoy Express");
   initialize();
 
   glutDisplayFunc(display);
-  //glutTimerFunc(50, train_move_timer, 0);
+  glutTimerFunc(50, train_move_timer, 0);
   glutKeyboardFunc(keyboard);
   glutSpecialFunc(special);
   glutMainLoop();

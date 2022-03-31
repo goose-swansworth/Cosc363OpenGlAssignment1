@@ -66,7 +66,7 @@ std::pair<float, float> vec_in_dir(std::pair<float, float> r0, std::pair<float, 
 
 void load_floor_texture(GLuint txId[])
 {
-    glBindTexture(GL_TEXTURE_2D, txId[0]);  //Use this texture
+    glBindTexture(GL_TEXTURE_2D, txId[0]);
     loadTGA("Dirt 00 seamless.tga");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

@@ -17,6 +17,7 @@
 #include <vector>
 #include "RailModels.h"
 #include "assignmentfuncs.h"
+#include "skybox.h"
 using namespace std;
 
 
@@ -33,8 +34,8 @@ float black[4] = {0};
 
 void floor(GLuint txId[])
 {
-    load_floor_texture(txId);
     glEnable(GL_TEXTURE_2D);
+    load_down_texture(txId);//glBindTexture(GL_TEXTURE_2D, txId[0]);
     glColor3f(1, 1, 1);
     glNormal3f(0.0, 1.0, 0.0);
 
@@ -44,16 +45,16 @@ void floor(GLuint txId[])
         glTexCoord2f(0, 0);
         glVertex3f(-400, 0, -400);
 
-        glTexCoord2f(4, 0);
+        glTexCoord2f(1, 0);
         glVertex3f(400, 0, -400);
 
-        glTexCoord2f(4, 4);
+        glTexCoord2f(1, 1);
         glVertex3f(400, 0, 400);
 
-        glTexCoord2f(0, 4);
+        glTexCoord2f(0, 1);
         glVertex3f(-400, 0, 400);
     glEnd();
-    glMaterialfv(GL_FRONT, GL_SPECULAR, white);
+    //glMaterialfv(GL_FRONT, GL_SPECULAR, white);
     glDisable(GL_TEXTURE_2D);
 
 }
@@ -499,8 +500,8 @@ void boxcar(float rail_in, float rail_out, float rail_height, float base_len, fl
     freight_base(rail_in, rail_out, rail_height, base_len, base_height, wheel_rad);
     float base_h = rail_height + 2*wheel_rad;
     float height = base_h + 4;
-    load_boxcar_texture(txId);
-    glEnable(GL_TEXTURE_2D);
+    //load_boxcar_texture(txId);
+    //glEnable(GL_TEXTURE_2D);
     glColor3f(0, 0.4, 0);
     glPushMatrix();
     glBegin(GL_QUADS);
@@ -538,7 +539,7 @@ void boxcar(float rail_in, float rail_out, float rail_height, float base_len, fl
       glTexCoord2f(1, 0); glVertex3f(-base_len/2+0.5, base_h, -rail_out);
     glEnd();
     glPopMatrix();
-    glDisable(GL_TEXTURE_2D);
+    //glDisable(GL_TEXTURE_2D);
 }
 
 void tanker(float rail_in, float rail_out, float rail_height, float base_len, float base_height, float wheel_rad)
