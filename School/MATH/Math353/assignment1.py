@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from numpy import exp, array, matrix
+from numpy import exp, array, matrix, linspace, trapz
 import numpy as np
 from numpy.linalg import norm, solve, det
 
@@ -103,17 +103,17 @@ def assignment_2_a():
     N = 157759
     beta = 3.9928
     gamma = 3.517
-    s0 = 156756
+    s0 = N*0.88 - 3
     i0 = 3
     T_max = 48
     Sns, Ins = recursive_func_sequnce(T_max, s0, i0, beta, N, gamma)
+    print(f"Max number of I_n: {max(Ins)} at week {Ins.index(max(Ins))}")
+    print(f"Total num Inf: {sum(Ins)}")
     #plot Sn and In
     fig, (ax1, ax2) = plt.subplots(1, 2)
-    fig.suptitle("SIR Model")
+    fig.suptitle("Iterative SIR Model")
     ax1.plot(range(len(Sns)), Sns, label=r"$S_n$", color="tab:green")
     ax2.plot(range(len(Ins)), Ins, label=r"$I_n$", color="tab:purple")
-    ax1.grid()
-    ax2.grid()
     ax1.legend(loc="best")
     ax2.legend(loc="best")
     plt.show()
@@ -126,11 +126,15 @@ def assignment_2_bi():
     i0 = 3
     T_max = 48
     #plot In for various values of v_prop
-    plt.title("SIR Model with/out vaccination")
-    for v_prop in range(0, 20, 5):
+    plt.title("Infected numbers with different vaxination proportions")
+    temp = None
+    for v_prop in range(2, 14, 2):
         Ins_v = recursive_func_sequnce(T_max, (1-v_prop/100)*N-i0, i0, beta, N, gamma)[1]
-        plt.plot(range(len(Ins_v)), Ins_v, label=f"$In, v={v_prop}$")
+        plt.plot(range(len(Ins_v)), Ins_v, label=f"{v_prop}%")
+        temp = max(Ins_v)
     plt.legend(loc="best")
+    plt.ylabel(r"$I_n$")
+    plt.xlabel(r"$n$")
     plt.show()
 
 def assignment_2_bii():
@@ -141,12 +145,40 @@ def assignment_2_bii():
     i0 = 3
     s0 = N - i0
     T_max = 48
-    #plot In for various values of Bq
-    plt.title("SIR Model with Quarantine and social distancing")
-    for bq in range(0, 20, 5):
+    #plot In for various values of B_q
+    Ins = recursive_func_sequnce(T_max, s0, i0, beta, N, gamma)[1]
+    plt.title("Infected numbers with different contact rates")
+    for bq in range(2, 14, 2):
         Ins = recursive_func_sequnce(T_max, s0, i0, (1-bq/100)*beta, N, gamma)[1]
-        plt.plot(range(len(Ins)), Ins, label=f"Bq = {bq}")
+        plt.plot(range(len(Ins)), Ins, label=f"|β - γ| = {abs((1-bq/100)*beta - gamma):.3f}")
     plt.legend(loc="best")
+    plt.xlabel(r"$n$")
+    plt.ylabel(r"$I_n$")
     plt.show()
 
-assignment_2_bii()
+
+def mu(gamma_dot, mu_inf_mu_0, lambd, n):
+    """Non-linear function of gamma_dot, the measure of the deformation of the material"""
+    return mu_inf_mu_0 + (1 - mu_inf_mu_0)*(1 + (lambd*gamma_dot)**2)**((n - 1) / 2)
+
+def assignment_3_b():
+    #constants
+    mu_inf_mu_0 = 0.01
+    lambd = 0
+    y_f = linspace(0, 1, 201)
+    gamma_f = [y / mu(1, mu_inf_mu_0, lambd, 1) for y in y_f] #gamma_dot and n are arbitary when lambda = 0
+    #plt.plot(gamma_f, y_f)
+    #plt.xlabel(r"$\gamma^._f$")
+    #plt.ylabel(r"$y_f$")
+    #plt.show()
+    u = [trapz(gamma_f[i:], y_f[i:]) for i in range(len(y_f))]
+    max_u = max(u)
+    plt.plot(y_f, [u[i] / max_u for i in range(len(u))], label=r"$u(y_{f, i})$")
+    plt.plot(y_f, [1/2-1/2*y**2 for y in y_f], label=r"$u(y)$")
+    plt.xlabel(r"$y_f$")
+    plt.ylabel(r"$u(y_f) / \max\{u\}$")
+    plt.show()
+
+
+
+assignment_3_b()
