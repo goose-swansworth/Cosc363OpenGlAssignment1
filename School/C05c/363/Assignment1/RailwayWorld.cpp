@@ -21,19 +21,19 @@ using namespace std;
 
 #define TO_DEGREES 180 / M_PI
 
-GLuint txId[6];
+GLuint txId[12];
 
 std::vector<std::pair<float, float>> line_array = {};
 float theta = 0;
+float look_angle = 0;
 
 // camara postions
-float lookrot = 0;
-float camx = 50;
-float camy = 50;
-float camz = 50;
+float camx = 0;
+float camy = 8;
+float camz = 0;
 float lookx = 0;
-float looky = 0;
-float lookz = 0;
+float looky = 8;
+float lookz = 1;
 
 float trainx = 0;
 float trainy = 0;
@@ -44,7 +44,6 @@ float rail_out = 2.75;
 float track_height = 1;
 
 int icurr = 0;
-GLuint txID[2];
 
 //---------------------------------------------------------------------
 void initialize(void) {
@@ -95,9 +94,6 @@ void display(void) {
 
   gluLookAt(camx, camy, camz, lookx, looky, lookz, 0.0, 1.0, 0.0);
 
-  // speen
-  glRotatef(theta, 0, 1, 0);
-
   floor(txId);
   track_loop(line_array, rail_in, rail_out, track_height);
   sleepers(line_array, rail_in * 2, rail_in * 2 / 5, track_height / 2, 3);
@@ -133,7 +129,7 @@ void display(void) {
       freight_engine(rail_in, rail_out, track_height, base_len, 1, 0.5);
       break;
     case 2:
-      boxcar(rail_in, rail_out, track_height, base_len, 1, 0.5, txID);
+      boxcar(rail_in, rail_out, track_height, base_len, 1, 0.5, txId);
       break;
     case 1:
       log_car(rail_in, rail_out, track_height, base_len, 1, 0.5);
@@ -144,6 +140,7 @@ void display(void) {
     }
     glPopMatrix();
   }
+  tunnel(5, 5, 2);
   glutSwapBuffers();
 }
 
@@ -157,16 +154,18 @@ void train_move_timer(int value) {
 void keyboard(unsigned char key, int x, int y) {
   switch (key) {
     case 'w':
-        camy--;
+        camx += 0.1*sin(look_angle);
+        camz -= 0.1*cos(look_angle);
         break;
     case 's':
-        camy++;
+        camx -= 0.1*sin(look_angle);
+        camz += 0.1*cos(look_angle);
         break;
     case 'd':
-        theta++;
+        look_angle += 0.1;
         break;
     case 'a':
-        theta--;
+        look_angle -= 0.1;
         break;
     case 'i':
         icurr++;
@@ -174,17 +173,36 @@ void keyboard(unsigned char key, int x, int y) {
     case ' ':
         camy++;
         break;
+    case '3':
+        camx = 200;
+        camy = 200;
+        camz = 200;
+        break;
     case '2':
         camx = 100;
         camy = 100;
         camz = 100;
         break;
     case '1':
-        camx = 50;
-        camy = 50;
-        camz = 50;
+        camx = 0;
+        camy = 25;
+        camz = 25;
+        lookx = 0;
+        looky = 0;
+        lookz = 0;
+        break;
+    case 'r': // reset
+        look_angle = 0;
+        camx = 0;
+        camy = 8;
+        camz = 0;
+        lookx = 0;
+        looky = 8;
+        lookz = 0;
         break;
   }
+  //lookx = camx + 200*sin(look_angle);
+  //lookz = camz - 200*cos(look_angle);
   glutPostRedisplay();
 }
 
@@ -216,17 +234,18 @@ int main(int argc, char **argv) {
   ifstream medline_file("mediumline.txt");
   parseMedianlineFile(medline_file, line_array);
 
-  glGenTextures(2, txId);
+  glGenTextures(12, txId);
+  load_floor_texture(txId);
 
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
   glutInitWindowSize(1024, 1024);
   glutInitWindowPosition(50, 50);
-  glutCreateWindow("Cum Express");
+  glutCreateWindow("Yoy Express");
   initialize();
 
   glutDisplayFunc(display);
-  //glutTimerFunc(50, train_move_timer, 0);
+  glutTimerFunc(50, train_move_timer, 0);
   glutKeyboardFunc(keyboard);
   glutSpecialFunc(special);
   glutMainLoop();

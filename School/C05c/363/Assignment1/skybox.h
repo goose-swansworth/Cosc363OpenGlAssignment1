@@ -12,3 +12,5 @@
 void load_sky_textures(GLuint txId[]);
 
 void skybox(GLuint txId[]);
+
+void load_down_texture(GLuint txId[]);
