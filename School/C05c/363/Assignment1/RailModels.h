@@ -28,4 +28,4 @@ void tanker(float rail_in, float rail_out, float rail_height, float base_len, fl
 
 void log_car(float rail_in, float rail_out, float rail_height, float base_len, float base_height, float wheel_rad);
 
-void tunnel(float h, float w, float in_rad);
+void tunnel(float h, float w, float in_rad, float n_slices, GLuint txId[]);

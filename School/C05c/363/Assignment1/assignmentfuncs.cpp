@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <utility>
 #include <vector>
 #include <cmath>
 #include "GL/freeglut.h"
@@ -64,6 +65,26 @@ std::pair<float, float> vec_in_dir(std::pair<float, float> r0, std::pair<float, 
 }
 
 
+void base_curve_normals(vector<float> vx, vector<float> vy, vector<float> &nx, vector<float> &ny)
+{
+    int n_points = vx.size();
+    for (int i = 1; i <= n_points; i++) {
+        pair<float, float> ui, ui_p1, vi_m1, vi, vi_p1, ni;
+        vi_m1.first = vx[i - 1]; vi_m1.second = vy[i - 1];
+        vi.first = vx[i]; vi.second = vy[i];
+        vi_p1.first = vx[(i + 1) % n_points]; vi_p1.second = vy[(i + 1) % n_points];
+        ui = vec_in_dir(vi_m1, vi);
+        ui_p1 = vec_in_dir(vi, vi_p1);
+        normalize_2d_vec(ui);
+        normalize_2d_vec(ui_p1);
+        ni.first = ui.second + ui_p1.second; ni.second = -ui.first + -ui.first;
+        normalize_2d_vec(ni);
+        nx.push_back(ni.first);
+        ny.push_back(ni.second);
+    }
+}
+
+
 void load_floor_texture(GLuint txId[])
 {
     glBindTexture(GL_TEXTURE_2D, txId[0]);
@@ -88,7 +109,7 @@ void load_railbed_texture(GLuint txId[])
 }
 
 void load_boxcar_texture(GLuint txId[]) {
-  glBindTexture(GL_TEXTURE_2D, txId[2]);  //Use this texture
+  glBindTexture(GL_TEXTURE_2D, txId[7]);  //Use this texture
     loadTGA("boxcarred.tga");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -96,3 +117,14 @@ void load_boxcar_texture(GLuint txId[]) {
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 }
+
+void load_brick_texture(GLuint txId[]) {
+  glBindTexture(GL_TEXTURE_2D, txId[8]);  //Use this texture
+    loadTGA("brickRough1.tga");
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+}
+

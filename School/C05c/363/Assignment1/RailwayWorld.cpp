@@ -43,6 +43,8 @@ float rail_in = 2;
 float rail_out = 2.75;
 float track_height = 1;
 
+float movex, movey, movez;
+
 int icurr = 0;
 
 //---------------------------------------------------------------------
@@ -102,7 +104,7 @@ void display(void) {
   glLightfv(GL_LIGHT0, GL_POSITION, lgt_pos);
   skybox(txId);
 
-  // glLightfv(GL_LIGHT1, GL_POSITION, spotlgt_pos); //spot postion
+  // glLightfv(GL_LIGHT1, GL_POSITION, spotlgt_pos); //spot postions
   // glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spotlgt_dir); //spot direction
 
   float base_len = 12;
@@ -140,7 +142,12 @@ void display(void) {
     }
     glPopMatrix();
   }
-  tunnel(5, 5, 2);
+  // positon tunnel
+  glPushMatrix();
+    glTranslatef(105, 0, -33.5);
+    glScalef(10, 10, 10);
+    tunnel(2, 8, 1.75, 30, txId);
+  glPopMatrix();
   glutSwapBuffers();
 }
 
@@ -201,8 +208,8 @@ void keyboard(unsigned char key, int x, int y) {
         lookz = 0;
         break;
   }
-  //lookx = camx + 200*sin(look_angle);
-  //lookz = camz - 200*cos(look_angle);
+  lookx = camx + 500*sin(look_angle);
+  lookz = camz - 500*cos(look_angle);
   glutPostRedisplay();
 }
 

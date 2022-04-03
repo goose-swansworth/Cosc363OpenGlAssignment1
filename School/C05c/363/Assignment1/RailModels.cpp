@@ -12,9 +12,13 @@
 #include <exception>
 #include <iostream>
 #include <fstream>
+#include <iterator>
+#include <math.h>
 #include <string>
 #include <utility>
 #include <vector>
+#include <algorithm>
+#include <bits/stdc++.h>
 #include "RailModels.h"
 #include "assignmentfuncs.h"
 #include "skybox.h"
@@ -600,17 +604,172 @@ void log_car(float rail_in, float rail_out, float rail_height, float base_len, f
   }
 
 
-void tunnel(float h, float w, float in_rad)
+static vector<float> tunnel_base_curve_coords(float h, float w, float r, float n_slices, int coord) 
 {
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glBegin(GL_TRIANGLE_FAN);
-        glVertex3f(0, h, 0);
-        glVertex3f(0, 0, 0);
-        glVertex3f(in_rad, 0, 0);
-        //TODO draw quader circle
-        glVertex3f(2*in_rad, h+h/2, 0);
-        glVertex3f(in_rad, h+h/2, 0);
-    glEnd();
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    float theta_step = (3*M_PI/2 - M_PI/2) / (n_slices-1);
+    float theta = M_PI/2;
+    float t_step = 3 / (n_slices - 1);
+    float t = 0;
+    vector<float> base;
+    switch (coord) { // a bunch of parameteric lines
+      case 0: // x coords
+        base.push_back(0);
+        base.push_back(r);
+        while (theta <=3*M_PI/2) {
+          base.push_back(2*r - r*sin((theta)));
+          theta += theta_step;
+        }
+        while (t <= 1) {
+          base.push_back(4*r);
+          t += t_step;
+        }
+        t = 0;
+        while (t <= 1) {
+          base.push_back(4*r-t*r);
+          t += t_step;
+        }
+        t = 0;
+        while (t <= 1) {
+          base.push_back(3*r-2*t*r);
+          t += t_step;
+        }
+        t = 0;
+        while (t <= 1) {
+          base.push_back(r*(1-t));
+          t += t_step;
+        }
+        t = 0;
+        while (t <= 1) {
+          base.push_back(0);
+          t += t_step;
+        }
+        break;
+      case 1: // y coords
+        base.push_back(0);
+        base.push_back(0);
+        while (theta < 3*M_PI/2) {
+          base.push_back(-r*cos(theta));
+          theta += theta_step;
+        }
+        while (t <= 1) {
+          base.push_back(t*h);
+          t += t_step;
+        }
+        t = 0;
+        while (t <= 1) {
+          base.push_back(h+t*h/2);
+          t += t_step;
+        }
+        t = 0;
+        while (t <= 1) {
+          base.push_back(h+h/2);
+          t += t_step;
+        }
+        t = 0;
+        while (t <= 1) {
+          base.push_back(h+h/2-t*h/2);
+          t += t_step;
+        }
+        t = 0;
+        while (t <= 1) {
+          base.push_back(h*(1-t));
+          t += t_step;
+        }
+        break;
+    }
+    return base;
 }
 
+static void half_tunnel_end(float h, float w, float r)
+{
+    float theta_step = M_PI / 2 / 29;
+    float theta = M_PI / 2;
+    glBegin(GL_TRIANGLE_FAN);
+      glVertex3f(0, h, 0);
+      glVertex3f(0, 0, 0);
+      glVertex3f(r, 0, 0);
+      while (theta <= M_PI) {
+        glVertex3f(2*r-r*sin(theta), -r*cos(theta), 0);
+        theta += theta_step;
+      }
+      glVertex3f(2*r, h+h/2, 0);
+      glVertex3f(r, h+h/2, 0);
+    glEnd();
+}
+
+
+static void tunnel_end(float h, float w, float r)
+{
+    half_tunnel_end(h, w, r);
+    glPushMatrix();
+      glTranslatef(4*r, 0, 0);
+      glScalef(-1, 1, 1);
+      half_tunnel_end(h, w, r);
+    glPopMatrix();
+}
+
+void tunnel(float h, float w, float in_rad, float n_slices, GLuint txId[])
+{
+    vector<float> vx, vy, vz, wx, wy, wz, nx, ny, nz, mx, my, mz;
+    int n_points; 
+    // generate base curve
+    vx = tunnel_base_curve_coords(h, w, in_rad, 30, 0);
+    vy = tunnel_base_curve_coords(h, w, in_rad, 30, 1);
+    n_points = vx.size();
+    fill_n(back_inserter(vz), n_points, 0);
+    fill_n(back_inserter(wx), n_points, 0);
+    fill_n(back_inserter(wy), n_points, 0);
+    fill_n(back_inserter(wz), n_points, 0);
+    fill_n(back_inserter(nz), n_points, 0);
+    fill_n(back_inserter(mx), n_points, 0);
+    fill_n(back_inserter(my), n_points, 0);
+    fill_n(back_inserter(mz), n_points, 0);
+
+    // compute base curve normals
+    base_curve_normals(vx, vy, nx, ny);
+
+    // sweep surface
+    glEnable(GL_TEXTURE_2D);
+    load_brick_texture(txId);
+    float angle = M_PI/2 / (n_slices);
+    for (int slice = 0; slice < n_slices; slice++) {
+        for (int i = 0; i < n_points; i++) {
+            wx[i] = vx[i]*cos(angle) + vz[i]*sin(angle);
+            wy[i] = vy[i];
+            wz[i] = vz[i]*cos(angle) - vx[i]*sin(angle);
+
+            mx[i] = nx[i]*cos(angle) + nz[i]*sin(angle);
+            my[i] = ny[i];
+            mz[i] = nz[i]*cos(angle) - nx[i]*sin(angle);
+        }
+        glBegin(GL_QUAD_STRIP);
+        for (int i = 0; i < n_points; i++) {
+            float s = (float)slice/n_slices;
+            float s_p1 = (float)(slice+1)/n_slices;
+            float t = (float)i/(n_points - 1);
+            glNormal3f(nx[i], ny[i], nz[i]);
+            glTexCoord2f(3*s, 3*t); glVertex3f(vx[i], vy[i], vz[i]);
+            glTexCoord2f(3*s_p1, 3*t); glNormal3f(mx[i], my[i], mz[i]);
+            glVertex3f(wx[i], wy[i], wz[i]);
+        }
+        glEnd();
+        for (int i = 0; i < n_points; i++) {
+          vx[i] = wx[i];
+          vy[i] = wy[i];
+          vz[i] = wz[i];
+
+          nx[i] = mx[i];
+          ny[i] = my[i];
+          nz[i] = mz[i];
+        }
+    }
+    // ends
+    glNormal3f(0, 0, 1);
+    tunnel_end(h, w, in_rad);
+    glNormal3f(-1, 0, 0);
+    glPushMatrix();
+      glRotatef(90, 0, 1, 0);
+      tunnel_end(h, w, in_rad);
+    glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
+}
