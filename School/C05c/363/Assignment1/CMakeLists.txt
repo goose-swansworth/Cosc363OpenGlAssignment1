@@ -7,7 +7,7 @@ set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 11)
 add_compile_options(-Wall)
 
-add_executable(railway_world RailwayWorld.cpp RailModels.cpp assignmentfuncs.cpp loadTGA.cpp skybox.cpp)
+add_executable(railway_world RailwayWorld.cpp RailModels.cpp assignmentfuncs.cpp loadTGA.cpp skybox.cpp textures.cpp)
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)

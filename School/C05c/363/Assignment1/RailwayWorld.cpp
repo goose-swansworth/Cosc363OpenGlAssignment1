@@ -1,14 +1,8 @@
-//  ========================================================================
-//  COSC363: Computer Graphics (2022);  University of Canterbury.
-//
-//  FILE NAME: RailwayWorld.cpp
-//  See Lab02.pdf for details
-//  ========================================================================
-
 #include "RailModels.h"
 #include "assignmentfuncs.h"
 #include "skybox.h"
 #include <GL/freeglut.h>
+#include <GL/freeglut_ext.h>
 #include <GL/gl.h>
 #include <cmath>
 #include <fstream>
@@ -16,35 +10,35 @@
 #include <math.h>
 #include <string>
 #include <utility>
-
-using namespace std;
+#include <vector>
+#include "textures.h"
 
 #define TO_DEGREES 180 / M_PI
 
-GLuint txId[12];
+using namespace std;
 
-std::vector<std::pair<float, float>> line_array = {};
-float theta = 0;
-float look_angle = 0;
+GLuint texture_ids[12];
 
-// camara postions
+vector<pair<float, float>> line_array = {};
+
+// camara postions and constants
 float camx = 0;
-float camy = 8;
+float camy = 12;
 float camz = 0;
 float lookx = 0;
 float looky = 8;
 float lookz = 1;
+float cam_step = 0.025;
+float look_angle = 0;
+bool follow_train = false;
 
-float trainx = 0;
-float trainy = 0;
-float trainz = 0;
-
+// constants for models
 float rail_in = 2;
 float rail_out = 2.75;
 float track_height = 1;
+float base_len = 12;
 
-float movex, movey, movez;
-
+// track index
 int icurr = 0;
 
 //---------------------------------------------------------------------
@@ -79,35 +73,14 @@ void initialize(void) {
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(60., 1.0, 10.0, 1000.0); // Perspective projection
+  gluPerspective(75., 1.0, 10.0, 1000.0); // Perspective projection
+
+  load_textures(texture_ids);
 }
 
-//-------------------------------------------------------------------
-void display(void) {
-  float lgt_pos[] = {0.0f, 50.0f, 0.0f,
-                     1.0f}; // light0 position (directly above the origin)
-  // float lgt1_pos[] = {50.f, 50.0f, 50.0f, 1.0f};
-  // float spotlgt_pos[] = {-10, 14, 0, 1};
-  // float spotlgt_dir[] = {-1, -1, 0};
 
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-
-  gluLookAt(camx, camy, camz, lookx, looky, lookz, 0.0, 1.0, 0.0);
-
-  floor(txId);
-  track_loop(line_array, rail_in, rail_out, track_height);
-  sleepers(line_array, rail_in * 2, rail_in * 2 / 5, track_height / 2, 3);
-  rail_bed(line_array, 10, rail_out * 2, track_height / 4, txId);
-
-  glLightfv(GL_LIGHT0, GL_POSITION, lgt_pos);
-  skybox(txId);
-
-  // glLightfv(GL_LIGHT1, GL_POSITION, spotlgt_pos); //spot postions
-  // glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spotlgt_dir); //spot direction
-
-  float base_len = 12;
+void draw_train() 
+{
   std::pair<float, float> pi;
   std::pair<float, float> pi_p1;
   std::pair<float, float> ui;
@@ -125,29 +98,68 @@ void display(void) {
     switch (i) {
     case 3:
       glRotatef(180, 0, 1, 0);
-      // lookx = pi.first;
-      // looky = track_height;
-      // lookz = pi.second;
+      if (follow_train) {
+          lookx = pi.first;
+          looky = track_height;
+          lookz = pi.second;
+      }
       freight_engine(rail_in, rail_out, track_height, base_len, 1, 0.5);
       break;
     case 2:
-      boxcar(rail_in, rail_out, track_height, base_len, 1, 0.5, txId);
+      boxcar(rail_in, rail_out, track_height, base_len, 1, 0.5, texture_ids);
       break;
     case 1:
-      log_car(rail_in, rail_out, track_height, base_len, 1, 0.5);
+      log_car(rail_in, rail_out, track_height, base_len, 1, 0.5, texture_ids);
       break;
     case 0:
-      tanker(rail_in, rail_out, track_height, base_len, 1, 0.5);
+      tanker(rail_in, rail_out, track_height, base_len, 1, 0.5, texture_ids);
       break;
     }
     glPopMatrix();
   }
+}
+
+
+//-------------------------------------------------------------------
+void display(void) {
+  float lgt_pos[] = {0.0f, 50.0f, 0.0f,
+                     1.0f}; // light0 position (directly above the origin)
+  // float lgt1_pos[] = {50.f, 50.0f, 50.0f, 1.0f};
+  // float spotlgt_pos[] = {-10, 14, 0, 1};
+  // float spotlgt_dir[] = {-1, -1, 0};
+
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+
+  gluLookAt(camx, camy, camz, lookx, looky, lookz, 0.0, 1.0, 0.0);
+
+  floor(texture_ids);
+  glPushMatrix();
+    glTranslatef(0, -100, 0);
+    skybox(texture_ids);
+  glPopMatrix();
+  track_loop(line_array, rail_in, rail_out, track_height);
+  sleepers(line_array, rail_in * 2, rail_in * 2 / 5, track_height / 2, 3);
+  rail_bed(line_array, 10, rail_out * 2, track_height / 4, texture_ids);
+
+  glLightfv(GL_LIGHT0, GL_POSITION, lgt_pos);
+
+  draw_train();
+  
   // positon tunnel
   glPushMatrix();
     glTranslatef(105, 0, -33.5);
     glScalef(10, 10, 10);
-    tunnel(2, 8, 1.75, 30, txId);
+    tunnel(1.75, 8, 1.75, 30, texture_ids);
   glPopMatrix();
+
+  glPushMatrix();
+    glTranslatef(108.5, -1, -33.5);
+    glScalef(9, 9, 9);
+    tunnel_straight(1.75, 8, 1.75, 30, texture_ids);
+  glPopMatrix();
+  station(base_len, 2);
   glutSwapBuffers();
 }
 
@@ -161,12 +173,12 @@ void train_move_timer(int value) {
 void keyboard(unsigned char key, int x, int y) {
   switch (key) {
     case 'w':
-        camx += 0.1*sin(look_angle);
-        camz -= 0.1*cos(look_angle);
+        camx = camx + cam_step*(lookx - camx);
+        camz = camz + cam_step*(lookz - camz);
         break;
     case 's':
-        camx -= 0.1*sin(look_angle);
-        camz += 0.1*cos(look_angle);
+        camx = camx - cam_step*(lookx - camx);
+        camz = camz - cam_step*(lookz - camz);
         break;
     case 'd':
         look_angle += 0.1;
@@ -177,8 +189,12 @@ void keyboard(unsigned char key, int x, int y) {
     case 'i':
         icurr++;
         break;
+    case 'f':
+        follow_train = !follow_train;
+        break;
     case ' ':
         camy++;
+        looky++;
         break;
     case '3':
         camx = 200;
@@ -208,41 +224,27 @@ void keyboard(unsigned char key, int x, int y) {
         lookz = 0;
         break;
   }
-  lookx = camx + 500*sin(look_angle);
-  lookz = camz - 500*cos(look_angle);
+  lookx = camx + 100*sin(look_angle);
+  lookz = camz - 100*cos(look_angle);
   glutPostRedisplay();
 }
 
 void special(int key, int x, int y) {
   switch (key) {
-    case GLUT_KEY_UP:
-        lookx++;
-        camx++;
-        break;
-    case GLUT_KEY_DOWN:
-        lookx--;
-        camx--;
-        break;
-    case GLUT_KEY_LEFT:
-        lookz++;
-        camz++;
-        break;
-    case GLUT_KEY_RIGHT:
-        lookz--;
-        camz--;
-        break;
+    case GLUT_KEY_SHIFT_L:
+      camy --;
+      looky --;
+      break;
   }
   glutPostRedisplay();
 }
+
 
 //---------------------------------------------------------------------
 int main(int argc, char **argv) {
   // Load median line
   ifstream medline_file("mediumline.txt");
   parseMedianlineFile(medline_file, line_array);
-
-  glGenTextures(12, txId);
-  load_floor_texture(txId);
 
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
